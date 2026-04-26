@@ -1,14 +1,9 @@
 'use client';
 
-import React, {
-  createContext,
-  useContext,
-  useState,
-  ReactNode,
-  useEffect
-} from 'react';
-
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { api } from '@/lib/api';
+
+
 
 export type PapelUsuario = 'admin' | 'gerente';
 
@@ -18,7 +13,6 @@ interface UsuarioAutenticado {
   email: string;
   papel: PapelUsuario;
 }
-
 interface AutenticacaoContextoType {
   usuarioAtual: UsuarioAutenticado | null;
   estaAutenticado: boolean;
@@ -27,72 +21,174 @@ interface AutenticacaoContextoType {
   realizarLogout: () => Promise<void>;
 }
 
-export const AutenticacaoContexto = createContext<
-  AutenticacaoContextoType | undefined
->(undefined);
+// 1. Definição do Contexto
+export const AutenticacaoContexto = createContext<AutenticacaoContextoType | undefined>(undefined);
 
 export function Provedor_Autenticacao({ children }: { children: ReactNode }) {
   const [usuarioAtual, setUsuarioAtual] = useState<UsuarioAutenticado | null>(null);
   const [carregando, setCarregando] = useState(true);
 
-  // 🔥 ESSENCIAL: verifica usuário ao carregar app
   useEffect(() => {
-const verificarUsuario = async () => {
-  try {
-    const res = await api.get('/auth/eu');
-
-    setUsuarioAtual(res.data); // 👈 agora vem completo (id, nome, email, papel)
-  } catch {
-    setUsuarioAtual(null);
-  } finally {
-    setCarregando(false);
-  }
-};
-
-
+    const verificarUsuario = async () => {
+      try {
+        const res = await api.get('/auth/eu');
+        setUsuarioAtual(res.data);
+      } catch {
+        setUsuarioAtual(null);
+      } finally {
+        setCarregando(false);
+      }
+    };
     verificarUsuario();
   }, []);
 
-  // 🔐 LOGIN
-  const realizarLogin = async (email: string, senha: string) => {
-    await api.post(
-      '/auth/login', 
-      { email, senha }
-    );
+const realizarLogin = async (email: string, senha: string) => {
+  try {
+    // 1. Envia como JSON conforme o seu backend espera (LoginSchema)
+    await api.post("/auth/login", {
+      email: email, 
+      senha: senha, 
+    });
 
-    // depois do login, pega usuário
+    // 2. O cookie já foi salvo automaticamente pelo navegador se o CORS estiver OK
+    // Agora busca os dados do usuário
     const res = await api.get('/auth/eu');
     setUsuarioAtual(res.data);
-  };
+    
+  } catch (error: any) {
+    //console.error("Erro no login:", error.response?.data || error.message);
+    throw new Error(error.response?.data?.detail || "Erro ao fazer login");
+  }
+};
 
-  // 🚪 LOGOUT
   const realizarLogout = async () => {
-    await api.post('/auth/logout'); // se tiver no backend
+    localStorage.removeItem('token');
     setUsuarioAtual(null);
   };
 
   return (
     <AutenticacaoContexto.Provider
-      value={{
-        usuarioAtual,
-        estaAutenticado: !!usuarioAtual,
-        carregando,
-        realizarLogin,
-        realizarLogout,
-      }}
+      value={{ usuarioAtual, estaAutenticado: !!usuarioAtual, carregando, realizarLogin, realizarLogout }}
     >
       {children}
     </AutenticacaoContexto.Provider>
   );
 }
 
+// 3. Hook Exportado (Garanta que esta parte esteja no final do arquivo)
 export function useAutenticacao() {
   const contexto = useContext(AutenticacaoContexto);
   if (!contexto) {
-    throw new Error('useAutenticacao deve ser usado dentro do Provider');
+    throw new Error('useAutenticacao deve ser usado dentro de Provedor_Autenticacao');
   }
   return contexto;
 }
+
+
+
+
+
+// 'use client';
+
+// import React, {
+//   createContext,
+//   useContext,
+//   useState,
+//   ReactNode,
+//   useEffect
+// } from 'react';
+
+// import { api } from '@/lib/api';
+
+// export type PapelUsuario = 'admin' | 'gerente';
+
+// interface UsuarioAutenticado {
+//   id: string;
+//   nome: string;
+//   email: string;
+//   papel: PapelUsuario;
+// }
+
+// interface AutenticacaoContextoType {
+//   usuarioAtual: UsuarioAutenticado | null;
+//   estaAutenticado: boolean;
+//   carregando: boolean;
+//   realizarLogin: (email: string, senha: string) => Promise<void>;
+//   realizarLogout: () => Promise<void>;
+// }
+
+// export const AutenticacaoContexto = createContext<
+//   AutenticacaoContextoType | undefined
+// >(undefined);
+
+// export function Provedor_Autenticacao({ children }: { children: ReactNode }) {
+//   const [usuarioAtual, setUsuarioAtual] = useState<UsuarioAutenticado | null>(null);
+//   const [carregando, setCarregando] = useState(true);
+
+//   // 🔥 ESSENCIAL: verifica usuário ao carregar app
+//   useEffect(() => {
+// const verificarUsuario = async () => {
+//   try {
+//     const res = await api.get('/auth/eu');
+
+//     setUsuarioAtual(res.data); // 👈 agora vem completo (id, nome, email, papel)
+//   } catch {
+//     setUsuarioAtual(null);
+//   } finally {
+//     setCarregando(false);
+//   }
+// };
+
+
+//     verificarUsuario();
+//   }, []);
+
+//   // 🔐 LOGIN
+//   const realizarLogin = async (email: string, senha: string) => {
+//     await api.post(
+//       '/auth/login', 
+//       { email, senha }
+//     );
+
+//     // depois do login, pega usuário
+//     const res = await api.get('/auth/eu');
+//     setUsuarioAtual(res.data);
+//   };
+
+//   // 🚪 LOGOUT
+//   const realizarLogout = async () => {
+//     await api.post('/auth/logout'); // se tiver no backend
+//     setUsuarioAtual(null);
+//   };
+
+//   // Verificar se token existe
+// // console.log('Token:', localStorage.getItem('token'));
+
+// // Verificar headers da requisição
+// // console.log('Headers:', config.headers);
+
+//   return (
+//     <AutenticacaoContexto.Provider
+//       value={{
+//         usuarioAtual,
+//         estaAutenticado: !!usuarioAtual,
+//         carregando,
+//         realizarLogin,
+//         realizarLogout,
+//       }}
+//     >
+//       {children}
+//     </AutenticacaoContexto.Provider>
+//   );
+// }
+
+// export function useAutenticacao() {
+//   const contexto = useContext(AutenticacaoContexto);
+//   if (!contexto) {
+//     throw new Error('useAutenticacao deve ser usado dentro do Provider');
+//   }
+//   return contexto;
+// }
 
 
 

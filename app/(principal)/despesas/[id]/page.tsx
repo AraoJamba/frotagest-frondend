@@ -116,11 +116,11 @@ export default function PaginaDetalhesVeiculo() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div>
                         <p className="text-sm text-muted-foreground mb-2">Veiculo</p>
-                        <p className="text-lg font-normal text-foreground">{despesa.veiculoId}</p>
+                        <p className="text-lg font-normal text-foreground">{despesa.veiculo_id}</p>
                     </div>
                     <div>
                         <p className="text-sm text-muted-foreground mb-2">Motorista</p>
-                        <Badge variant="outline" className="text-base capitalize">{despesa.motoristaId}</Badge>
+                        <Badge variant="outline" className="text-base capitalize">{despesa.motorista_id}</Badge>
                     </div>
                     <div>
                         <p className="text-sm text-muted-foreground mb-2">Recibo</p>

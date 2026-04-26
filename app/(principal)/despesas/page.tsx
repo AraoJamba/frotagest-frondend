@@ -24,7 +24,7 @@ export default function PaginaMotoristas() {
   const [idParaDeletar, setIdParaDeletar] = useState<string | null>(null);
 
   const despesasFiltrados = despesas.filter(d =>
-    d.data.toLowerCase().includes(busca.toLowerCase()) ||
+    //d.data.toLowerCase().includes(busca.toLowerCase()) ||
     d.tipo.toLowerCase().includes(busca.toLowerCase()) ||
     d.tipo.includes(busca)
   );
@@ -87,8 +87,8 @@ export default function PaginaMotoristas() {
                 {despesasFiltrados.map((despesa) => (
                   <tr key={despesa.id} className="hover:bg-muted/50 transition-colors">
                     <td className="px-6 py-4 text-sm"><Badge variant="outline" className='capitalize'>{despesa.tipo}</Badge></td>
-                    <td className="px-6 py-4 text-sm text-muted-foreground">{despesa.veiculoId}</td>
-                    <td className="px-6 py-4 text-sm text-muted-foreground">{despesa.motoristaId}</td>
+                    <td className="px-6 py-4 text-sm text-muted-foreground">{despesa.veiculo_id}</td>
+                    <td className="px-6 py-4 text-sm text-muted-foreground">{despesa.motorista_id}</td>
                     <td className="px-6 py-4 text-sm text-muted-foreground">{despesa.data}</td>
                     <td className="px-6 py-4 text-center">
                       <div className="flex items-center justify-center gap-2">

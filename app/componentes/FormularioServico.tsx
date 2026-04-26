@@ -26,8 +26,8 @@ export function FormularioServico({ servico, onSubmit, carregando = false }: Pro
       nome: '',
       descricao: '',
       tipo: 'manutencao',
-      custoEstimado: 0,
-      dataCadastro: new Date().toISOString().split('T')[0],
+      custo_estimado: 0,
+      data_cadastro: new Date().toISOString().split('T')[0],
       ativo: true,
     }
   );
@@ -39,7 +39,7 @@ export function FormularioServico({ servico, onSubmit, carregando = false }: Pro
 
     if (!dados.nome.trim()) novosErros.nome = 'Nome é obrigatório';
     if (!dados.descricao.trim()) novosErros.descricao = 'Descrição é obrigatória';
-    if (dados.custoEstimado <= 0) novosErros.custoEstimado = 'Custo deve ser maior que 0';
+    if (dados.custo_estimado <= 0) novosErros.custoEstimado = 'Custo deve ser maior que 0';
 
     setErros(novosErros);
     return Object.keys(novosErros).length === 0;
@@ -113,12 +113,12 @@ export function FormularioServico({ servico, onSubmit, carregando = false }: Pro
               id="custoEstimado"
               type="number"
               step="0.01"
-              value={dados.custoEstimado}
-              onChange={(e) => handleChange('custoEstimado', parseFloat(e.target.value))}
+              value={dados.custo_estimado}
+              onChange={(e) => handleChange('custo_estimado', parseFloat(e.target.value))}
               disabled={carregando}
               className={erros.custoEstimado ? 'border-destructive' : ''}
             />
-            {erros.custoEstimado && <p className="text-sm text-destructive mt-1">{erros.custoEstimado}</p>}
+            {erros.custo_estimado && <p className="text-sm text-destructive mt-1">{erros.custo_estimado}</p>}
           </div>
 
           {/* Status */}

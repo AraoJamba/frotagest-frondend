@@ -15,9 +15,14 @@ import { ArrowLeft } from 'lucide-react';
 export default function PaginaEditarViagem() {
   const router = useRouter();
   const params = useParams();
+  const { motoristas, veiculos } = useDados();
+
   const { obterViagem, atualizarViagem } = useDados();
   const [viagem, setViagem] = useState<Viagem | null>(null);
   const [carregando, setCarregando] = useState(false);
+
+
+
 
   useEffect(() => {
     const id = params.id as string;

@@ -30,11 +30,12 @@ export function FormularioViagem({ viagem, onSubmit, carregando = false }: Props
         m.numeroCarta
     );
 
-    const veiculosFiltrados = veiculos.filter(v =>
-        v.marca.toLowerCase() ||
-        v.modelo.toLowerCase() ||
-        v.placa
-    );
+    const veiculosFiltrados = veiculos?.filter(v =>
+        v.marca.toLowerCase().includes('') ||
+        v.modelo.toLowerCase().includes('') ||
+        v.placa.toLowerCase().includes('')
+    ) || [];
+
 
 
     const router = useRouter();
@@ -111,7 +112,7 @@ export function FormularioViagem({ viagem, onSubmit, carregando = false }: Props
 
                     {/* Veiculo */}
                     <div>
-                        <Label htmlFor="veiculoId">Status</Label>
+                        <Label htmlFor="veiculoId">Veiculo</Label>
                         <Select value={dados.veiculoId} onValueChange={(valor) => handleChange('veiculoId', valor)} disabled={carregando}>
                             <SelectTrigger>
                                 <SelectValue />
@@ -230,11 +231,12 @@ export function FormularioViagem({ viagem, onSubmit, carregando = false }: Props
                         <Input
                             id="custoViagem"
                             type="number"
-                            value={dados.combustivelGasto}
+                            value={dados.custoViagem}   // ✅ CERTO
                             onChange={(e) => handleChange('custoViagem', parseInt(e.target.value))}
                             disabled={carregando}
                             className={erros.custoViagem ? 'border-destructive' : ''}
                         />
+
                         {erros.custoViagem && <p className="text-sm text-destructive mt-1">{erros.custoViagem}</p>}
                     </div>
 

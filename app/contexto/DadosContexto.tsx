@@ -1,119 +1,6 @@
 'use client';
 
-import { Viagem } from "@/app/tipos/indices"
 
-import { criarMotorista as apiCriarMotorista } from '@/lib/motoristas';
-
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { listarMotoristas, deletarMotorista as apiDeletar } from '@/lib/motoristas';
-
-import { listarViagens, deletarViagemAPI } from "@/lib/viagens";
-import { mapViagem } from "@/lib/mappers";
-
-
-
-
-interface Motorista {
-  id: string;
-  nome: string;
-  email: string;
-  numeroCarta: string;
-  categoriaCarta: string;
-  ativo: boolean;
-}
-
-interface DadosContextoType {
-  motoristas: Motorista[];
-  carregarMotoristas: () => Promise<void>;
-  deletarMotorista: (id: string) => Promise<void>;
-  adicionarMotorista: (motorista: Motorista) => Promise<void>; // 👈 ADICIONA ISSO
-  viagens: Viagem[];
-  carregarViagens: () => Promise<void>;
-  setViagens: React.Dispatch<React.SetStateAction<Viagem[]>>;
-  deletarViagem: (id: string) => Promise<void> | void;
-}
-
-
-//const DadosContexto = createContext<DadosContextoType | undefined>(undefined);
-export const DadosContexto = createContext<DadosContextoType | undefined>(undefined);
-
-
-export function Provedor_Dados({ children }: { children: React.ReactNode }) {
-  const [motoristas, setMotoristas] = useState<Motorista[]>([]);
-  const [viagens, setViagens] = useState<Viagem[]>([]);
-
-  const [loadingViagens, setLoadingViagens] = useState(false);
-  const [erroViagens, setErroViagens] = useState<string | null>(null);
-
-
-  const carregarMotoristas = async () => {
-    const data = await listarMotoristas();
-    setMotoristas(data);
-  };
-
-  const deletarMotorista = async (id: string) => {
-    await apiDeletar(id);
-    setMotoristas((prev) => prev.filter((m) => m.id !== id));
-  };
-
-  const adicionarMotorista = async (motorista: Motorista) => {
-    const novo = await apiCriarMotorista(motorista);
-
-    setMotoristas((prev) => [...prev, novo]);
-  };
-
-
-  const carregarViagens = async () => {
-    const res = await listarViagens();
-    setViagens(res.map(mapViagem));
-  };
-
-
-  const deletarViagem = async (id: string) => {
-    await deletarViagemAPI(id);
-
-    setViagens((prev) => prev.filter((v) => v.id !== id));
-  };
-
-
-
-
-  useEffect(() => {
-    carregarMotoristas();
-    carregarViagens();
-  }, []);
-
-  return (
-    <DadosContexto.Provider value={{
-      motoristas,
-      carregarMotoristas,
-      deletarMotorista,
-      adicionarMotorista, // 👈 IMPORTANTE
-
-      viagens,
-      setViagens,
-      deletarViagem,
-      carregarViagens,
-    }}>
-
-      {children}
-    </DadosContexto.Provider>
-  );
-}
-
-export function useDados() {
-  const context = useContext(DadosContexto);
-  if (!context) {
-    throw new Error('useDados deve ser usado dentro do Provedor_Dados');
-  }
-  return context;
-}
-
-
-
-/* 'use client';
-
-import React, { createContext, useContext, useState, ReactNode } from 'react';
 import {
   Motorista,
   Veiculo,
@@ -125,19 +12,45 @@ import {
   Lembrete,
 } from '@/app/tipos/indices';
 
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { api } from '@/lib/api';
+import { mapearServicoParaFrontend, ServicoBackend } from '@/lib/mappers';
+
+
+
 interface DadosContextoType {
+
+  // Motoristas
+  carregarMotoristas: () => Promise<void>;
+
+  // Veículos
+  carregarVeiculos: () => Promise<void>;
+
+  // Viagens
+  carregarViagens: () => Promise<void>;
+
+  carregarDespesas: () => Promise<void>;
+
+  carregarPostoCombustivel: () => Promise<void>
+  carregarLembretes: () => Promise<void>
+  carregarManutencoes: () => Promise<void>
+  carregarServicos: () => Promise<void>
+
+
   // Motoristas
   motoristas: Motorista[];
-  adicionarMotorista: (motorista: Motorista) => void;
-  atualizarMotorista: (id: string, motorista: Partial<Motorista>) => void;
-  deletarMotorista: (id: string) => void;
+  adicionarMotorista: (motorista: Motorista) => Promise<void>;
+  atualizarMotorista: (id: string, motorista: Partial<Motorista>) => Promise<void>;
+  deletarMotorista: (id: string) => Promise<void>;
+
   obterMotorista: (id: string) => Motorista | undefined;
 
   // Veículos
   veiculos: Veiculo[];
-  adicionarVeiculo: (veiculo: Veiculo) => void;
-  atualizarVeiculo: (id: string, veiculo: Partial<Veiculo>) => void;
-  deletarVeiculo: (id: string) => void;
+  adicionarVeiculo: (veiculo: Veiculo) => Promise<void>;
+  atualizarVeiculo: (id: string, veiculo: Partial<Veiculo>) => Promise<void>;
+  deletarVeiculo: (id: string) => Promise<void>;
+
   obterVeiculo: (id: string) => Veiculo | undefined;
 
   // Serviços
@@ -149,9 +62,10 @@ interface DadosContextoType {
 
   // Viagens
   viagens: Viagem[];
-  adicionarViagem: (viagem: Viagem) => void;
-  atualizarViagem: (id: string, viagem: Partial<Viagem>) => void;
-  deletarViagem: (id: string) => void;
+  adicionarViagem: (viagem: Viagem) => Promise<void>;
+  atualizarViagem: (id: string, viagem: Partial<Viagem>) => Promise<void>;
+  deletarViagem: (id: string) => Promise<void>;
+
   obterViagem: (id: string) => Viagem | undefined;
 
   // Manutenção
@@ -159,12 +73,14 @@ interface DadosContextoType {
   adicionarManutencao: (manutencao: ManutencaoVeiculo) => void;
   atualizarManutencao: (id: string, manutencao: Partial<ManutencaoVeiculo>) => void;
   deletarManutencao: (id: string) => void;
+  obterManutencao: (id: string) => ManutencaoVeiculo | undefined;
 
   // Despesas
   despesas: Despesa[];
-  adicionarDespesa: (despesa: Despesa) => void;
-  atualizarDespesa: (id: string, despesa: Partial<Despesa>) => void;
-  deletarDespesa: (id: string) => void;
+  adicionarDespesa: (despesa: Despesa) => Promise<void>;
+  atualizarDespesa: (id: string, despesa: Partial<Despesa>) => Promise<void>;
+  deletarDespesa: (id: string) => Promise<void>;
+
   obterDespesa: (id: string) => Despesa | undefined;
 
   // Postos de Combustível
@@ -184,414 +100,312 @@ interface DadosContextoType {
 
 export const DadosContexto = createContext<DadosContextoType | undefined>(undefined);
 
-// Dados iniciais de exemplo
-const motoristasIniciais: Motorista[] = [
-  {
-    id: '1',
-    nome: 'Antónia José',
-    email: 'ajose@frotagest.com',
-    telefone: '920987345',
-    numeroCarta: '123456789',
-    dataValidadeCarta: '2026-10-10',
-    categoriaCarta: 'EB',
-    dataNascimento: '1990-01-15',
-    dataCadastro: '2024-01-01',
-    ativo: true,
-    endereco: 'Rua A, 100',
-    cidade: 'Panguila',
-    provincia: 'Bengo',
-    numeroBI: '',
-  },
-  {
-    id: '2',
-    nome: 'Arão Jamba',
-    email: 'maria@frotagest.com',
-    telefone: '927636677',
-    numeroCarta: '987654321',
-    categoriaCarta: 'A1',
-    dataValidadeCarta: '2026-10-10',
-    dataNascimento: '1985-05-20',
-    dataCadastro: '2024-01-05',
-    ativo: true,
-    endereco: 'Rua beto Carneiro, 200',
-    cidade: 'Viana',
-    provincia: 'Luanda',
-    numeroBI: '',
-  },
-];
 
-const viagensIniciais: Viagem[] = [
-  {
-    id: '1',
-    motoristaId: '1',
-    veiculoId: '1',
-    dataInicio: '2026-02-14',
-    dataFim: '2026-02-16',
-    localPartida: 'Benguela',
-    localDestino: 'Huambo',
-    distancia: 3, // km
-    status: 'planejada',
-    combustivelGasto: 0,
-    custoViagem: 0,
-    observacoes: '',
-  },
-  {
-    id: '2',
-    motoristaId: '2',
-    veiculoId: '2',
-    dataInicio: '2026-01-14',
-    dataFim: '2026-02-01',
-    localPartida: 'Luanda',
-    localDestino: 'Malanje',
-    distancia: 3, // km
-    status: 'concluida',
-    combustivelGasto: 1000,
-    custoViagem: 0,
-    observacoes: 'feita',
-  },
-
-    {
-    id: '3',
-    motoristaId: '2',
-    veiculoId: '2',
-    dataInicio: '2026-01-14',
-    dataFim: undefined,
-    localPartida: 'Luanda',
-    localDestino: 'Malanje',
-    distancia: 3, // km
-    status: 'concluida',
-    combustivelGasto: 1000,
-    custoViagem: 0,
-    observacoes: 'feita',
-  },
-];
-
-const veiculosIniciais: Veiculo[] = [
-  {
-    id: '1',
-    placa: 'LD-12-89-YZ',
-    modelo: 'Scania 124',
-    marca: 'Scania',
-    ano: 2020,
-    VIN: 'XY123456789',
-    tipo: 'pesado',
-    capacidadeCarga: 20000,
-    dataCadastro: '2024-01-01',
-    ativo: true,
-    combustivel: 'diesel',
-    consumoMedio: 5.5,
-    ultimaRevista: '2024-01-15',
-  },
-  {
-    id: '2',
-    placa: 'LD-34-67-WX',
-    modelo: 'Volvo FH16',
-    marca: 'Volvo',
-    ano: 2019,
-    VIN: 'AB987654321',
-    tipo: 'pesado',
-    capacidadeCarga: 18000,
-    dataCadastro: '2024-01-02',
-    ativo: true,
-    combustivel: 'diesel',
-    consumoMedio: 5.2,
-    ultimaRevista: '2024-01-10',
-  },
-];
-
-const despesasIniciais: Despesa[] = [
-  {
-    id: '1',
-    data: '2022-01-20',
-    descricao: '',
-    pago: '0',
-    tipo: 'combustivel',
-    valor: 10000,
-    veiculoId: '1',
-    motoristaId: '1',
-    recibo: '123456789',
-  },
-]
-
-const servicosIniciais: Servico[] = [
-  {
-    id: '1',
-    nome: 'Troca de Óleo',
-    descricao: 'Troca de óleo do motor',
-    tipo: 'manutencao',
-    custoEstimado: 150,
-    dataCadastro: '2024-01-01',
-    ativo: true,
-  },
-  {
-    id: '2',
-    nome: 'Revisão Completa',
-    descricao: 'Revisão completa do veículo',
-    tipo: 'inspecao',
-    custoEstimado: 500,
-    dataCadastro: '2024-01-01',
-    ativo: true,
-  },
-    {
-    id: '3',
-    nome: 'Revisão Completa',
-    descricao: 'Revisão completa do veículo',
-    tipo: 'inspecao',
-    custoEstimado: 10000,
-    dataCadastro: '2024-01-01',
-    ativo: true,
-  },
-    {
-    id: '4',
-    nome: 'Revisão Completa',
-    descricao: 'Revisão completa do veículo',
-    tipo: 'inspecao',
-    custoEstimado: 1000000,
-    dataCadastro: '2024-01-01',
-    ativo: true,
-  },
-];
-
-const lembretesIniciais: Lembrete[] = [
-  {
-    id: '1',
-    titulo: 'Revisao do carro',
-    descricao: 'Revisao do carro',
-    tipo: 'revisao',
-    dataAgendada: '2026-03-01',
-    dataCriacao: '2026-02-20',
-    completado: 'Não',
-    veiculoId: '1',
-    motoristaId: '1',
-    prioridade: 'media',
-  },
-  {
-    id: '2',
-    titulo: 'Comprar moto',
-    descricao: 'Comprar motor do carro',
-    tipo: 'outro',
-    dataAgendada: '2026-04-01',
-    dataCriacao: '2026-02-24',
-    completado: 'Sim',
-    veiculoId: '2',
-    motoristaId: '2',
-    prioridade: 'alta',
-  },
-];
-
-const postosCombustivelIniciais: PostoCombustivel[] = [
-  {
-    id: '1',
-    nome: 'Pumangol',
-    endereco: 'Viana, Luanda, Angola',
-    cidade: 'Viana',
-    provincia: 'Luanda',
-    telefone: '9229339111',
-    precoCombustivel: 300,
-    gasoleo: 300,
-    gasolina: 300,
-    dataCadastro: '2025-31-12',
-    ativo: true,
-  },
-  {
-    id: '2',
-    nome: 'Sonangol',
-    endereco: 'Boavista, estrada Nº100',
-    cidade: 'Ingombotas',
-    provincia: 'Luanda',
-    telefone: '9229339111',
-    precoCombustivel: 300,
-    gasoleo: 300,
-    gasolina: 300,
-    dataCadastro: '2026-31-12',
-    ativo: true,
-  },
-];
 
 export function Provedor_Dados({ children }: { children: ReactNode }) {
-  const [motoristas, setMotoristas] = useState<Motorista[]>(motoristasIniciais);
-  const [veiculos, setVeiculos] = useState<Veiculo[]>(veiculosIniciais);
-  const [servicos, setServicos] = useState<Servico[]>(servicosIniciais);
-  const [viagens, setViagens] = useState<Viagem[]>((viagensIniciais));
+  const [motoristas, setMotoristas] = useState<Motorista[]>([]);
+  const [veiculos, setVeiculos] = useState<Veiculo[]>([]);
+  const [viagens, setViagens] = useState<Viagem[]>([]);
+
+  const [servicos, setServicos] = useState<Servico[]>([]);
   const [manutencoes, setManutencoes] = useState<ManutencaoVeiculo[]>([]);
-  const [despesas, setDespesas] = useState<Despesa[]>(despesasIniciais);
-  const [postosCombustivel, setPostosCombustivel] = useState<PostoCombustivel[]>(postosCombustivelIniciais);
-  const [lembretes, setLembretes] = useState<Lembrete[]>(lembretesIniciais);
+  const [despesas, setDespesas] = useState<Despesa[]>([]);
+  const [postosCombustivel, setPostosCombustivel] = useState<PostoCombustivel[]>([]);
+  const [lembretes, setLembretes] = useState<Lembrete[]>([]);
+
+
 
   // Motoristas
-  const adicionarMotorista = (motorista: Motorista) => {
-    setMotoristas([...motoristas, motorista]);
+  const adicionarMotorista = async (motorista: Motorista) => {
+    const res = await api.post('/motoristas', motorista);
+    setMotoristas(prev => [...prev, res.data]);
   };
 
-  const atualizarMotorista = (id: string, atualizacoes: Partial<Motorista>) => {
-    setMotoristas(motoristas.map(m => m.id === id ? { ...m, ...atualizacoes } : m));
+  const atualizarMotorista = async (id: string, dados: Partial<Motorista>) => {
+    const res = await api.put(`/motoristas/${id}`, dados);
+    setMotoristas(prev => prev.map(m => m.id === id ? res.data : m));
   };
 
-  const deletarMotorista = (id: string) => {
-    setMotoristas(motoristas.filter(m => m.id !== id));
+  const deletarMotorista = async (id: string) => {
+    await api.delete(`/motoristas/${id}`);
+    setMotoristas(prev => prev.filter(m => m.id !== id));
   };
 
-  const obterMotorista = (id: string) => {
-    return motoristas.find(m => m.id === id);
+  const carregarMotoristas = async () => {
+    const res = await api.get('/motoristas');
+    setMotoristas(res.data);
   };
+
+  const obterMotorista = (id: string) => motoristas.find(m => m.id === id);
+
 
   // Veículos
-  const adicionarVeiculo = (veiculo: Veiculo) => {
-    setVeiculos([...veiculos, veiculo]);
+  const adicionarVeiculo = async (veiculo: Veiculo) => {
+    const res = await api.post('/veiculos', veiculo);
+    setVeiculos(prev => [...prev, res.data]);
   };
 
-  const atualizarVeiculo = (id: string, atualizacoes: Partial<Veiculo>) => {
-    setVeiculos(veiculos.map(v => v.id === id ? { ...v, ...atualizacoes } : v));
+  const atualizarVeiculo = async (id: string, dados: Partial<Veiculo>) => {
+    const res = await api.put(`/veiculos/${id}`, dados);
+    setVeiculos(prev => prev.map(v => v.id === id ? res.data : v));
   };
 
-  const deletarVeiculo = (id: string) => {
-    setVeiculos(veiculos.filter(v => v.id !== id));
+  const deletarVeiculo = async (id: string) => {
+    await api.delete(`/veiculos/${id}`);
+    setVeiculos(prev => prev.filter(v => v.id !== id));
   };
 
-  const obterVeiculo = (id: string) => {
-    return veiculos.find(v => v.id === id);
+  const carregarVeiculos = async () => {
+    const res = await api.get('/veiculos');
+    setVeiculos(res.data);
   };
+
+  const obterVeiculo = (id: string) => veiculos.find(v => v.id === id);
+
 
   // Serviços
-  const adicionarServico = (servico: Servico) => {
-    setServicos([...servicos, servico]);
+  // const adicionarServico = (servico: Servico) => {
+  //   setServicos([...servicos, servico]);
+  // };
+
+  // const atualizarServico = (id: string, atualizacoes: Partial<Servico>) => {
+  //   setServicos(servicos.map(s => s.id === id ? { ...s, ...atualizacoes } : s));
+  // };
+
+  // const deletarServico = (id: string) => {
+  //   setServicos(servicos.filter(s => s.id !== id));
+  // };
+
+  // const obterServico = (id: string) => {
+  //   return servicos.find(s => s.id === id);
+  // };
+
+  const adicionarServico = async (servico: Servico) => {
+    const res = await api.post('/servicos', servico);
+    setServicos(prev => [...prev, res.data]);
   };
 
-  const atualizarServico = (id: string, atualizacoes: Partial<Servico>) => {
-    setServicos(servicos.map(s => s.id === id ? { ...s, ...atualizacoes } : s));
+  const atualizarServico = async (id: string, dados: Partial<Servico>) => {
+    const res = await api.put(`/servicos/${id}`, dados);
+    setServicos(prev => prev.map(s => s.id === id ? res.data : s));
   };
 
-  const deletarServico = (id: string) => {
-    setServicos(servicos.filter(s => s.id !== id));
+  const deletarServico = async (id: string) => {
+    await api.delete(`/servicos/${id}`);
+    setServicos(prev => prev.filter(s => s.id !== id));
   };
 
-  const obterServico = (id: string) => {
-    return servicos.find(s => s.id === id);
+  const obterServico = (id: string) => servicos.find(s => s.id === id);
+
+  const carregarServicos = async () => {
+    const res = await api.get('/servicos');
+    setServicos(res.data);
+    {console.log(res.data)}
   };
+
+  // Exemplo adaptado da lógica de 'verificarUsuario' nas fontes [1]
+
+
 
   // Viagens
-  const adicionarViagem = (viagem: Viagem) => {
-    setViagens([...viagens, viagem]);
+  const adicionarViagem = async (viagem: Viagem) => {
+    const res = await api.post('/viagens', viagem);
+    setViagens(prev => [...prev, res.data]);
   };
 
-  const atualizarViagem = (id: string, atualizacoes: Partial<Viagem>) => {
-    setViagens(viagens.map(v => v.id === id ? { ...v, ...atualizacoes } : v));
+  const atualizarViagem = async (id: string, dados: Partial<Viagem>) => {
+    const res = await api.put(`/viagens/${id}`, dados);
+    setViagens(prev => prev.map(v => v.id === id ? res.data : v));
   };
 
-  const deletarViagem = (id: string) => {
-    setViagens(viagens.filter(v => v.id !== id));
+  const deletarViagem = async (id: string) => {
+    await api.delete(`/viagens/${id}`);
+    setViagens(prev => prev.filter(v => v.id !== id));
   };
 
-  const obterViagem = (id: string) => {
-    return viagens.find(v => v.id === id);
+  const obterViagem = (id: string) => viagens.find(v => v.id === id);
+
+  const carregarViagens = async () => {
+    const res = await api.get('/viagens');
+    setViagens(res.data);
   };
+
+
+
+
+
+
+
+
 
   // Manutenção
-  const adicionarManutencao = (manutencao: ManutencaoVeiculo) => {
-    setManutencoes([...manutencoes, manutencao]);
+  // const adicionarManutencao = (manutencao: ManutencaoVeiculo) => {
+  //   setManutencoes([...manutencoes, manutencao]);
+  // };
+
+  // const atualizarManutencao = (id: string, atualizacoes: Partial<ManutencaoVeiculo>) => {
+  //   setManutencoes(manutencoes.map(m => m.id === id ? { ...m, ...atualizacoes } : m));
+  // };
+
+  // const deletarManutencao = (id: string) => {
+  //   setManutencoes(manutencoes.filter(m => m.id !== id));
+  // };
+
+    const adicionarManutencao = async (manutencao: ManutencaoVeiculo) => {
+    const res = await api.post('/manutencoes', manutencao);
+    setManutencoes(prev => [...prev, res.data]);
   };
 
-  const atualizarManutencao = (id: string, atualizacoes: Partial<ManutencaoVeiculo>) => {
-    setManutencoes(manutencoes.map(m => m.id === id ? { ...m, ...atualizacoes } : m));
+  const atualizarManutencao = async (id: string, dados: Partial<ManutencaoVeiculo>) => {
+    const res = await api.put(`/manutencoes/${id}`, dados);
+    setManutencoes(prev => prev.map(m => m.id === id ? res.data : m));
   };
 
-  const deletarManutencao = (id: string) => {
-    setManutencoes(manutencoes.filter(m => m.id !== id));
+  const deletarManutencao = async (id: string) => {
+    await api.delete(`/manutencoes/${id}`);
+    setManutencoes(prev => prev.filter(m => m.id !== id));
   };
+
+  const carregarManutencoes = async () => {
+    const res = await api.get('/manutencoes');
+    setManutencoes(res.data);
+  };
+
+  const obterManutencao = (id: string) => manutencoes.find(m => m.id === id);
+
 
   // Despesas
-  const adicionarDespesa = (despesa: Despesa) => {
-    setDespesas([...despesas, despesa]);
+  const adicionarDespesa = async (despesa: Despesa) => {
+    const res = await api.post('/despesas', despesa);
+    setDespesas(prev => [...prev, res.data]);
   };
 
-  const atualizarDespesa = (id: string, atualizacoes: Partial<Despesa>) => {
-    setDespesas(despesas.map(d => d.id === id ? { ...d, ...atualizacoes } : d));
+  const atualizarDespesa = async (id: string, dados: Partial<Despesa>) => {
+    const res = await api.put(`/despesas/${id}`, dados);
+    setDespesas(prev => prev.map(d => d.id === id ? res.data : d));
   };
 
-  const deletarDespesa = (id: string) => {
-    setDespesas(despesas.filter(d => d.id !== id));
+  const deletarDespesa = async (id: string) => {
+    await api.delete(`/despesas/${id}`);
+    setDespesas(prev => prev.filter(d => d.id !== id));
   };
 
-  const obterDespesa = (id: string) => {
-    return despesas.find(d => d.id === id);
+  const carregarDespesas = async () => {
+    const res = await api.get('/despesas');
+    setDespesas(res.data);
   };
+
+  const obterDespesa = (id: string) => despesas.find(d => d.id === id);
 
   // Postos de Combustível
-  const adicionarPostoCombustivel = (posto: PostoCombustivel) => {
-    setPostosCombustivel([...postosCombustivel, posto]);
+
+  const adicionarPostoCombustivel = async (posto: PostoCombustivel) => {
+    const res = await api.post('/postos', posto);
+    setPostosCombustivel(prev => [...prev, res.data]);
   };
 
-  const atualizarPostoCombustivel = (id: string, atualizacoes: Partial<PostoCombustivel>) => {
-    setPostosCombustivel(postosCombustivel.map(p => p.id === id ? { ...p, ...atualizacoes } : p));
+  const atualizarPostoCombustivel = async (id: string, dados: Partial<PostoCombustivel>) => {
+    const res = await api.put(`/postos/${id}`, dados);
+    setPostosCombustivel(prev => prev.map(p => p.id === id ? res.data : p));
   };
 
-  const deletarPostoCombustivel = (id: string) => {
-    setPostosCombustivel(postosCombustivel.filter(p => p.id !== id));
+  const deletarPostoCombustivel = async (id: string) => {
+    await api.delete(`/postos/${id}`);
+    setPostosCombustivel(prev => prev.filter(p => p.id !== id));
   };
 
-  const obterPostoCombustivel = (id: string) => {
-    return postosCombustivel.find(p => p.id === id);
+  const carregarPostoCombustivel = async () => {
+    const res = await api.get('/postos');
+    setPostosCombustivel(res.data);
   };
+
+  const obterPostoCombustivel = (id: string) => postosCombustivel.find(p => p.id === id);
 
   // Lembretes
-  const adicionarLembrete = (lembrete: Lembrete) => {
-    setLembretes([...lembretes, lembrete]);
+  const adicionarLembrete = async (lembrete: Lembrete) => {
+    const res = await api.post('/lembretes', lembrete);
+    setLembretes(prev => [...prev, res.data]);
   };
 
-  const atualizarLembrete = (id: string, atualizacoes: Partial<Lembrete>) => {
-    setLembretes(lembretes.map(l => l.id === id ? { ...l, ...atualizacoes } : l));
+  const atualizarLembrete = async (id: string, dados: Partial<Lembrete>) => {
+    const res = await api.put(`/lembretes/${id}`, dados);
+    setLembretes(prev => prev.map(l => l.id === id ? res.data : l));
   };
 
-  const deletarLembrete = (id: string) => {
-    setLembretes(lembretes.filter(l => l.id !== id));
+  const deletarLembrete = async (id: string) => {
+    await api.delete(`/lembretes/${id}`);
+    setLembretes(prev => prev.filter(l => l.id !== id));
   };
 
-  const obterLembrete = (id: string) => {
-    return lembretes.find(l => l.id === id);
+  const carregarLembretes = async () => {
+    const res = await api.get('/lembretes');
+    setLembretes(res.data);
   };
+
+  const obterLembrete = (id: string) => lembretes.find(l => l.id === id);
+
+
+
+
 
   return (
     <DadosContexto.Provider
       value={{
         motoristas,
+        carregarMotoristas,
         adicionarMotorista,
         atualizarMotorista,
         deletarMotorista,
         obterMotorista,
+
         veiculos,
+        carregarVeiculos,
         adicionarVeiculo,
         atualizarVeiculo,
         deletarVeiculo,
         obterVeiculo,
+
         servicos,
         adicionarServico,
         atualizarServico,
         deletarServico,
+        carregarServicos,
         obterServico,
+
         viagens,
+        carregarViagens,
         adicionarViagem,
         atualizarViagem,
         deletarViagem,
         obterViagem,
+
         manutencoes,
         adicionarManutencao,
         atualizarManutencao,
         deletarManutencao,
+        carregarManutencoes,
+        obterManutencao,
+
         despesas,
         adicionarDespesa,
         atualizarDespesa,
         deletarDespesa,
         obterDespesa,
+        carregarDespesas,
+
         postosCombustivel,
         adicionarPostoCombustivel,
         atualizarPostoCombustivel,
         deletarPostoCombustivel,
+        carregarPostoCombustivel,
         obterPostoCombustivel,
+
         lembretes,
         adicionarLembrete,
         atualizarLembrete,
         deletarLembrete,
         obterLembrete,
+        carregarLembretes,
       }}
     >
       {children}
@@ -606,5 +420,3 @@ export function useDados() {
   }
   return contexto;
 }
-
-*/

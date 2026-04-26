@@ -113,12 +113,12 @@ export default function PaginaDetalhesServico() {
           <div>
             <p className="text-sm text-muted-foreground mb-2">Custo Estimado</p>
             <p className="text-2xl font-normal text-foreground">
-              {new Intl.NumberFormat('pt-AO', { style: 'currency', currency: 'AOA' }).format(servico.custoEstimado)}
+              {new Intl.NumberFormat('pt-AO', { style: 'currency', currency: 'AOA' }).format(servico.custo_estimado)}
             </p>
           </div>
           <div>
             <p className="text-sm text-muted-foreground mb-2">Data de Cadastro</p>
-            <p className="text-lg font-normal text-foreground">{formatarData(servico.dataCadastro)}</p>
+            <p className="text-lg font-normal text-foreground">{formatarData(servico.data_cadastro)}</p>
           </div>
         </div>
       </Card>

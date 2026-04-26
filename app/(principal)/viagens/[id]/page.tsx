@@ -1,10 +1,10 @@
 'use client';
-import {formatarData, formatarMoeda, calcularDias} from '@/app/funcoes/funcoes'
+import {formatarData, formatarMoeda} from '@/app/funcoes/funcoes'
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { useDados } from '@/app/contexto/DadosContexto';
-import { Veiculo, Viagem } from '@/app/tipos/indices';
+import { Viagem } from '@/app/tipos/indices';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';

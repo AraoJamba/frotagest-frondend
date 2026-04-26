@@ -1,5 +1,4 @@
 'use client';
-
 import { useState } from 'react';
 import Link from 'next/link';
 import { useDados } from '@/app/contexto/DadosContexto';
@@ -18,6 +17,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 
+
 export default function PaginaServicos() {
   const { servicos, deletarServico } = useDados();
   const [busca, setBusca] = useState('');
@@ -28,6 +28,8 @@ export default function PaginaServicos() {
     s.descricao.toLowerCase().includes(busca.toLowerCase())
   );
 
+  console.log(servicos)
+
   const handleDeletar = () => {
     if (idParaDeletar) {
       deletarServico(idParaDeletar);
@@ -35,9 +37,13 @@ export default function PaginaServicos() {
     }
   };
 
+
+  
+
   return (
+    
     <div className="space-y-6">
-      
+
       {/* Cabeçalho */}
       <div className="flex items-center justify-between">
         <div>
@@ -91,9 +97,11 @@ export default function PaginaServicos() {
                     <td className="px-6 py-4 text-sm text-muted-foreground">{servico.descricao}</td>
                     <td className="px-6 py-4 text-sm">
                       <Badge variant="outline" className="capitalize">{servico.tipo}</Badge>
+                      
                     </td>
                     <td className="px-6 py-4 text-sm text-foreground font-medium">
-                      {new Intl.NumberFormat('pt-AO', { style: 'currency', currency: 'AOA' }).format(servico.custoEstimado)}
+                      {new Intl.NumberFormat('pt-AO', { style: 'currency', currency: 'AOA' }).format(servico.custo_estimado)}
+                      
                     </td>
                     <td className="px-6 py-4 text-sm">
                       <Badge variant={servico.ativo ? 'default' : 'secondary'}>

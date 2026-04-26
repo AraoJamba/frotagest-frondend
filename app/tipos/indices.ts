@@ -38,8 +38,8 @@ export interface Servico {
   nome: string;
   descricao: string;
   tipo: 'manutencao' | 'reparo' | 'inspecao';
-  custoEstimado: number;
-  dataCadastro: string;
+  custo_estimado: number;
+  data_cadastro: string;
   ativo: boolean;
 }
 
@@ -76,8 +76,8 @@ export interface Despesa {
   valor: number;
   data: string;
   descricao: string;
-  veiculoId?: string;
-  motoristaId?: string;
+  veiculo_id?: string;
+  motorista_id?: string;
   recibo?: string;
   pago: '0' | '1';
 }

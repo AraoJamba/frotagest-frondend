@@ -23,8 +23,8 @@ export function FormularioDespesa({ lembrete, onSubmit, carregando = false }: Pr
             descricao: '',
             tipo: 'manutencao',
             data: '',
-            veiculoId: '',
-            motoristaId: '',
+            veiculo_id: '',
+            motorista_id: '',
             valor: 0,
             pago: '0',
             recibo: '',
@@ -38,7 +38,7 @@ export function FormularioDespesa({ lembrete, onSubmit, carregando = false }: Pr
 
         if (!dados.data || dados.data == '') novosErros.dataAgendada = 'Data obrigatório';
         if (!dados.tipo || dados.tipo == null) novosErros.titulo = 'Tipo invalido';
-        if (!dados.veiculoId || dados.veiculoId == '') novosErros.veiculoId = 'Veículo invalido';
+        if (!dados.veiculo_id || dados.veiculo_id == '') novosErros.veiculo_id = 'Veículo invalido';
         if (!dados.valor || dados.valor <= 0 ) novosErros.valor = 'Valor invalido';
 
         setErros(novosErros);
@@ -117,12 +117,12 @@ export function FormularioDespesa({ lembrete, onSubmit, carregando = false }: Pr
                     <Input
                         id="motoristaId"
                         type="tel"
-                        value={dados.motoristaId}
-                        onChange={(e) => handleChange('motoristaId', e.target.value)}
+                        value={dados.motorista_id}
+                        onChange={(e) => handleChange('motorista_id', e.target.value)}
                         disabled={carregando}
                         className={erros.ano ? 'border-destructive' : ''}
                     />
-                    {erros.motoristaId && <p className="text-sm text-destructive mt-1">{erros.motoristaId}</p>}
+                    {erros.motorista_id && <p className="text-sm text-destructive mt-1">{erros.motorista_id}</p>}
                 </div>
 
                 {/* veiculoId */}
@@ -131,12 +131,12 @@ export function FormularioDespesa({ lembrete, onSubmit, carregando = false }: Pr
                     <Input
                         id="veiculoId"
                         type="tel"
-                        value={dados.veiculoId}
-                        onChange={(e) => handleChange('veiculoId', e.target.value)}
+                        value={dados.veiculo_id}
+                        onChange={(e) => handleChange('veiculo_id', e.target.value)}
                         disabled={carregando}
                         className={erros.ano ? 'border-destructive' : ''}
                     />
-                    {erros.veiculoId && <p className="text-sm text-destructive mt-1">{erros.veiculoId}</p>}
+                    {erros.veiculo_id && <p className="text-sm text-destructive mt-1">{erros.veiculo_id}</p>}
                 </div>
 
                 {/* Data */}

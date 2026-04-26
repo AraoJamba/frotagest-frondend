@@ -1,5 +1,6 @@
 import { api } from "@/lib/api";
 
+
 // 🔥 LISTAR
 export const listarVeiculos = async () => {
   const res = await api.get("/veiculos");
@@ -18,6 +19,9 @@ export const criarVeiculo = async (data: any) => {
   const res = await api.post("/veiculos", data);
   return res.data;
 };
+
+
+
 
 
 
