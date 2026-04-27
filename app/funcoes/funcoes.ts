@@ -1,9 +1,9 @@
 
 
 export function formatarData(data?: string) {
-  if (!data) return "-";
+  if (!data) return "- - - - -";
 
-  const d = new Date(data + "Z"); // 👈 força UTC
+  const d = new Date(data + "Z"); 
 
   if (isNaN(d.getTime())) return "-";
 

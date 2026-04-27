@@ -33,15 +33,6 @@ export interface Veiculo {
   ultimaRevista: string;
 }
 
-export interface Servico {
-  id: string;
-  nome: string;
-  descricao: string;
-  tipo: 'manutencao' | 'reparo' | 'inspecao';
-  custo_estimado: number;
-  data_cadastro: string;
-  ativo: boolean;
-}
 
 export interface Viagem {
   id: string;
@@ -60,14 +51,24 @@ export interface Viagem {
 
 export interface ManutencaoVeiculo {
   id: string;
-  veiculoId: string;
-  tipoManutencao: 'preventiva' | 'corretiva';
+  veiculo_id: string;
+  tipo_manutencao: 'preventiva' | 'corretiva' | 'manutencao' | 'reparo' | 'inspecao';
   descricao: string;
-  dataAgendada: string;
-  dataConclusao?: string;
+  data_agendada: string;
+  data_conclusao?: string;
   responsavel: string;
   custo: number;
   status: 'agendada' | 'emAndamento' | 'concluida' | 'cancelada';
+}
+
+export interface Servico {
+  id: string;
+  nome: string;
+  descricao: string;
+  tipo: 'manutencao' | 'reparo' | 'inspecao';
+  custo_estimado: number;
+  data_cadastro: string;
+  ativo: boolean;
 }
 
 export interface Despesa {
