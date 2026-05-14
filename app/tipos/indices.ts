@@ -47,6 +47,18 @@ export interface Viagem {
   combustivelGasto: number;
   custoViagem: number;
   observacoes?: string;
+
+  motorista?: {
+    id: string;
+    nome: string;
+  };
+
+  veiculo?: {
+    id: string,
+    placa: string,
+    marca: string,
+    modelo: string
+  }
 }
 
 export interface ManutencaoVeiculo {
@@ -55,7 +67,7 @@ export interface ManutencaoVeiculo {
   tipo_manutencao: 'preventiva' | 'corretiva' | 'manutencao' | 'reparo' | 'inspecao';
   descricao: string;
   data_agendada: string;
-  data_conclusao?: string;
+  data_conclusao?: string | null;
   responsavel: string;
   custo: number;
   status: 'agendada' | 'emAndamento' | 'concluida' | 'cancelada';

@@ -1,26 +1,41 @@
-'use client';
+"use client";
 
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { Motorista } from '@/app/tipos/indices';
-import { Card } from '@/components/ui/card';
+
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Edit, Trash2 } from 'lucide-react';
+
+import {
+  ArrowLeft,
+  Edit,
+  Trash2,
+  Mail,
+  Phone,
+  MapPin,
+  CreditCard,
+  Calendar,
+  User,
+  ShieldCheck,
+  Hash,
+} from 'lucide-react';
+
 import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
+  AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 
 import { api } from '@/lib/api';
 import { obterMotorista } from "@/lib/motoristas";
-
 
 export default function PaginaDetalhesMotorista() {
   const router = useRouter();
@@ -30,120 +45,71 @@ export default function PaginaDetalhesMotorista() {
   const [loading, setLoading] = useState(true);
   const [mostrarConfirmacao, setMostrarConfirmacao] = useState(false);
 
-  // 🔥 BUSCAR MOTORISTA NO BACKEND
-useEffect(() => {
-  const fetchMotorista = async () => {
-    try {
-      setLoading(true);
+  useEffect(() => {
+    const fetchMotorista = async () => {
+      try {
+        const data = await obterMotorista(params.id as string);
+        setMotorista(data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-      const data = await obterMotorista(params.id as string);
+    if (params?.id) fetchMotorista();
+  }, [params.id]);
 
-      setMotorista({
-        id: data.id,
-        nome: data.nome,
-        email: data.email,
-        telefone: data.telefone,
-
-        numeroCarta: data.numeroCarta,
-        numeroBI: data.numeroBI,
-        categoriaCarta: data.categoriaCarta,
-
-        dataNascimento: data.dataNascimento,
-        dataValidadeCarta: data.dataValidadeCarta,
-        dataCadastro: data.dataCadastro,
-
-        ativo: data.ativo,
-        endereco: data.endereco,
-        cidade: data.cidade,
-        provincia: data.provincia,
-      });
-
-    } catch (err) {
-      console.error("Erro ao buscar motorista:", err);
-      setMotorista(null);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (params?.id) {
-    fetchMotorista();
-  }
-}, [params.id]);
-
-
-
-  // 🔥 DELETE REAL
   const handleDeletar = async () => {
-    try {
-      await api.delete(`/motoristas/${motorista?.id}`);
-      router.push('/motoristas');
-    } catch (err) {
-      console.error("Erro ao deletar:", err);
-    }
+    await api.delete(`/motoristas/${motorista?.id}`);
+    router.push('/motoristas');
   };
 
-  const calcularIdade = (dataNascimento: string) => {
-    const nascimento = new Date(dataNascimento);
-    const hoje = new Date();
-
-    let idade = hoje.getFullYear() - nascimento.getFullYear();
-    const mes = hoje.getMonth() - nascimento.getMonth();
-
-    if (mes < 0 || (mes === 0 && hoje.getDate() < nascimento.getDate())) {
-      idade--;
-    }
-
+  const calcularIdade = (data: string) => {
+    const n = new Date(data);
+    const h = new Date();
+    let idade = h.getFullYear() - n.getFullYear();
+    const m = h.getMonth() - n.getMonth();
+    if (m < 0 || (m === 0 && h.getDate() < n.getDate())) idade--;
     return idade;
   };
 
   const formatarData = (data?: string | null) => {
     if (!data) return "-";
-
-    const parsed = new Date(data);
-
-    if (isNaN(parsed.getTime())) return "-";
-
-    return parsed.toLocaleDateString("pt-AO");
+    const d = new Date(data);
+    return isNaN(d.getTime()) ? "-" : d.toLocaleDateString("pt-AO");
   };
-
 
   if (loading) {
     return (
-      <Card className="p-8 text-center">
-        <p className="text-muted-foreground">Carregando motorista...</p>
-      </Card>
+      <div className="flex h-[300px] items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-blue-500" />
+      </div>
     );
   }
 
   if (!motorista) {
     return (
-      <Card className="p-8 text-center">
-        <p className="text-muted-foreground">Motorista não encontrado</p>
+      <Card className="p-8 text-center bg-white border-slate-200">
+        <p className="text-slate-500">Motorista não encontrado</p>
       </Card>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="max-w-6xl mx-auto space-y-8">
 
       {/* HEADER */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => router.back()}>
-            <ArrowLeft className="w-6 h-6" />
-          </Button>
-
-          <div>
-            <h1 className="text-3xl font-bold">{motorista.nome}</h1>
-            <p className="text-muted-foreground">Detalhes do motorista</p>
-          </div>
-        </div>
+        <Button variant="ghost" onClick={() => router.back()}>
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Voltar
+        </Button>
 
         <div className="flex gap-2">
           <Link href={`/motoristas/${motorista.id}/editar`}>
-            <Button className="gap-2">
-              <Edit className="w-5 h-5" />
+            <Button variant="outline" className="gap-2">
+              <Edit className="w-4 h-4" />
               Editar
             </Button>
           </Link>
@@ -153,90 +119,117 @@ useEffect(() => {
             className="gap-2"
             onClick={() => setMostrarConfirmacao(true)}
           >
-            <Trash2 className="w-5 h-5" />
+            <Trash2 className="w-4 h-4" />
             Deletar
           </Button>
         </div>
       </div>
 
-      {/* INFO BÁSICA */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="p-6">
-          <p className="text-sm text-muted-foreground">Email</p>
-          <p className="font-medium">{motorista.email}</p>
-        </Card>
+      {/* PERFIL */}
+      <Card className="p-8 rounded-3xl border border-slate-200 bg-white">
+        <div className="flex items-center gap-6">
 
-        <Card className="p-6">
-          <p className="text-sm text-muted-foreground">Telefone</p>
-          <p className="font-medium">{motorista.telefone}</p>
-        </Card>
-
-        <Card className="p-6">
-          <p className="text-sm text-muted-foreground">Status</p>
-          <Badge variant={motorista.ativo ? "default" : "secondary"}>
-            {motorista.ativo ? "Ativo" : "Inativo"}
-          </Badge>
-        </Card>
-      </div>
-
-      {/* DOCUMENTOS */}
-      <Card className="p-6">
-        <h2 className="text-xl font-semibold mb-4">Documentos</h2>
-
-        <div className="grid md:grid-cols-3 gap-4">
-          <div>
-            <p className="text-sm text-muted-foreground">Carta</p>
-            <p>{motorista.numeroCarta}</p>
+          <div className="h-20 w-20 flex items-center justify-center rounded-2xl bg-blue-600 text-white text-xl font-bold">
+            {motorista.nome.slice(0, 2).toUpperCase()}
           </div>
 
           <div>
-            <p className="text-sm text-muted-foreground">Categoria</p>
-            <Badge variant="outline">{motorista.categoriaCarta}</Badge>
+            <div className="flex items-center gap-3">
+              <h1 className="text-2xl font-bold text-slate-800">
+                {motorista.nome}
+              </h1>
+
+              <Badge className={motorista.ativo
+                ? "bg-green-50 text-green-700"
+                : "bg-slate-100 text-slate-500"}>
+                {motorista.ativo ? "Ativo" : "Inativo"}
+              </Badge>
+            </div>
+
+            <div className="mt-2 flex gap-4 text-sm text-slate-500">
+              <span className="flex items-center gap-1">
+                <Mail className="w-4 h-4" /> {motorista.email}
+              </span>
+              <span className="flex items-center gap-1">
+                <Phone className="w-4 h-4" /> {motorista.telefone}
+              </span>
+            </div>
           </div>
 
-          <div>
-            <p className="text-sm text-muted-foreground">Validade</p>
-            <p>{formatarData(motorista.dataValidadeCarta)}</p>
-          </div>
         </div>
       </Card>
 
-      {/* PESSOAL */}
-      <Card className="p-6">
-        <h2 className="text-xl font-semibold mb-4">Pessoal</h2>
+      {/* GRID */}
+      <div className="grid lg:grid-cols-3 gap-6">
 
-        <p>
-          Nascimento: {formatarData(motorista.dataNascimento)} (
-          {calcularIdade(motorista.dataNascimento)} anos)
-        </p>
+        {/* DOCUMENTOS */}
+        <Card className="lg:col-span-2 border border-slate-200 bg-white">
+          <CardContent className="p-6 space-y-6">
 
-        <p>Cadastro: {formatarData(motorista.dataCadastro)}</p>
-      </Card>
+            <h3 className="flex items-center gap-2 font-semibold text-slate-700">
+              <ShieldCheck className="w-5 h-5 text-blue-600" />
+              Documentação
+            </h3>
 
-      {/* ENDEREÇO */}
-      <Card className="p-6">
-        <h2 className="text-xl font-semibold mb-4">Endereço</h2>
+            <div className="grid sm:grid-cols-2 gap-6">
+              <Info label="Carta" value={motorista.numeroCarta} />
+              <Info label="BI" value={motorista.numeroBI} />
+              <Info label="Categoria" value={motorista.categoriaCarta} />
+              <Info label="Validade" value={formatarData(motorista.dataValidadeCarta)} />
+            </div>
 
-        <p>{motorista.endereco}</p>
-        <p>{motorista.cidade} - {motorista.provincia}</p>
-      </Card>
+          </CardContent>
+        </Card>
 
-      {/* DELETE CONFIRM */}
+        {/* LADO DIREITO */}
+        <div className="space-y-6">
+
+          <Card className="p-6 border border-slate-200 bg-white">
+            <h3 className="text-sm font-bold text-slate-500 mb-4">
+              Informações
+            </h3>
+
+            <div className="space-y-3 text-sm">
+              <Row label="Idade" value={`${calcularIdade(motorista.dataNascimento)} anos`} />
+              <Row label="Nascimento" value={formatarData(motorista.dataNascimento)} />
+              <Row label="Cadastro" value={formatarData(motorista.dataCadastro)} />
+            </div>
+          </Card>
+
+          <Card className="p-6 border border-slate-200 bg-white">
+            <h3 className="flex items-center gap-2 text-sm font-bold text-slate-500 mb-3">
+              <MapPin className="w-4 h-4" />
+              Endereço
+            </h3>
+
+            <p className="text-slate-800">{motorista.endereco}</p>
+            <p className="text-sm text-slate-500">
+              {motorista.cidade}, {motorista.provincia}
+            </p>
+          </Card>
+
+        </div>
+      </div>
+
+      {/* DIALOG */}
       <AlertDialog open={mostrarConfirmacao} onOpenChange={setMostrarConfirmacao}>
-        <AlertDialogContent>
+        <AlertDialogContent className="bg-white border-slate-200">
           <AlertDialogHeader>
-            <AlertDialogTitle>Deletar Motorista</AlertDialogTitle>
+            <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
             <AlertDialogDescription>
-              Tem certeza que deseja deletar {motorista.nome}?
+              Deseja deletar {motorista.nome}?
             </AlertDialogDescription>
           </AlertDialogHeader>
 
-          <div className="flex justify-end gap-3">
+          <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDeletar}>
+            <AlertDialogAction
+              onClick={handleDeletar}
+              className="bg-red-600 hover:bg-red-700"
+            >
               Deletar
             </AlertDialogAction>
-          </div>
+          </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
 
@@ -244,205 +237,21 @@ useEffect(() => {
   );
 }
 
+/* COMPONENTES */
+function Info({ label, value }: any) {
+  return (
+    <div>
+      <p className="text-xs text-slate-500">{label}</p>
+      <p className="font-medium text-slate-800">{value}</p>
+    </div>
+  );
+}
 
-
-
-
-
-
-
-
-// 'use client';
-
-// import { useEffect, useState } from 'react';
-// import { useRouter, useParams } from 'next/navigation';
-// import Link from 'next/link';
-// import { useDados } from '@/app/contexto/DadosContexto';
-// import { Motorista } from '@/app/tipos/indices';
-// import { Card } from '@/components/ui/card';
-// import { Button } from '@/components/ui/button';
-// import { Badge } from '@/components/ui/badge';
-// import { ArrowLeft, Edit, Trash2 } from 'lucide-react';
-// import {
-//   AlertDialog,
-//   AlertDialogAction,
-//   AlertDialogCancel,
-//   AlertDialogContent,
-//   AlertDialogDescription,
-//   AlertDialogHeader,
-//   AlertDialogTitle,
-// } from '@/components/ui/alert-dialog';
-
-// export default function PaginaDetalhesMotorista() {
-//   const router = useRouter();
-//   const params = useParams();
-//   const { obterMotorista, deletarMotorista } = useDados();
-//   const [motorista, setMotorista] = useState<Motorista | null>(null);
-//   const [mostrarConfirmacao, setMostrarConfirmacao] = useState(false);
-
-//   useEffect(() => {
-//     const id = params.id as string;
-//     const motoristaEncontrado = obterMotorista(id);
-//     if (motoristaEncontrado) {
-//       setMotorista(motoristaEncontrado);
-//     }
-//   }, [params.id, obterMotorista]);
-
-//   if (!motorista) {
-//     return (
-//       <Card className="p-8 text-center">
-//         <p className="text-muted-foreground">Motorista não encontrado</p>
-//       </Card>
-//     );
-//   }
-
-//   const handleDeletar = () => {
-//     deletarMotorista(motorista.id);
-//     router.push('/motoristas');
-//   };
-
-//   const calcularIdade = (dataNascimento: string) => {
-//     const nascimento = new Date(dataNascimento);
-//     const hoje = new Date();
-//     let idade = hoje.getFullYear() - nascimento.getFullYear();
-//     const mes = hoje.getMonth() - nascimento.getMonth();
-//     if (mes < 0 || (mes === 0 && hoje.getDate() < nascimento.getDate())) {
-//       idade--;
-//     }
-//     return idade;
-//   };
-
-//   const formatarData = (data: string) => {
-//     return new Date(data).toLocaleDateString('pt-AO');
-//   };
-
-//   return (
-//     <div className="space-y-6">
-//       {/* Cabeçalho */}
-//       <div className="flex items-center justify-between">
-//         <div className="flex items-center gap-4">
-//           <Button
-//             variant="ghost"
-//             size="icon"
-//             onClick={() => router.back()}
-//           >
-//             <ArrowLeft className="w-6 h-6" />
-//           </Button>
-//           <div>
-//             <h1 className="text-3xl font-bold text-foreground">{motorista.nome}</h1>
-//             <p className="text-muted-foreground mt-2">Detalhes do motorista</p>
-//           </div>
-//         </div>
-//         <div className="flex gap-2">
-//           <Link href={`/motoristas/${motorista.id}/editar`}>
-//             <Button className="gap-2">
-//               <Edit className="w-5 h-5" />
-//               Editar
-//             </Button>
-//           </Link>
-//           <Button
-//             variant="destructive"
-//             className="gap-2"
-//             onClick={() => setMostrarConfirmacao(true)}
-//           >
-//             <Trash2 className="w-5 h-5" />
-//             Deletar
-//           </Button>
-//         </div>
-//       </div>
-
-//       {/* Informações Básicas */}
-//       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-//         <Card className="p-6">
-//           <p className="text-sm text-muted-foreground mb-2">Email</p>
-//           <p className="text-lg font-medium text-foreground">{motorista.email}</p>
-//         </Card>
-//         <Card className="p-6">
-//           <p className="text-sm text-muted-foreground mb-2">Telefone</p>
-//           <p className="text-lg font-medium text-foreground">{motorista.telefone}</p>
-//         </Card>
-//         <Card className="p-6">
-//           <p className="text-sm text-muted-foreground mb-2">Status</p>
-//           <Badge variant={motorista.ativo ? 'default' : 'secondary'} className="text-base">
-//             {motorista.ativo ? 'Ativo' : 'Inativo'}
-//           </Badge>
-//         </Card>
-//       </div>
-
-//       {/* Documentos */}
-//       <Card className="p-6">
-//         <h2 className="text-xl font-semibold text-foreground mb-4">Documentos</h2>
-//         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-//           <div>
-//             <p className="text-sm text-muted-foreground mb-2">Número da Carta de Condução</p>
-//             <p className="text-lg font-medium text-foreground">{motorista.numeroCarta}</p>
-//           </div>
-//           <div>
-//             <p className="text-sm text-muted-foreground mb-2">Categoria da Carta</p>
-//             <Badge variant="outline" className="text-base">{motorista.categoriaCarta}</Badge>
-//           </div>
-//           <div>
-//             <p className="text-sm text-muted-foreground mb-2">Data de Expiração</p>
-//             <Badge variant="outline" className="text-base">{formatarData(motorista.dataValidadeCarta)}</Badge>
-//           </div>
-//         </div>
-//       </Card>
-
-//       {/* Informações Pessoais */}
-//       <Card className="p-6">
-//         <h2 className="text-xl font-semibold text-foreground mb-4">Informações Pessoais</h2>
-//         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-//           <div>
-//             <p className="text-sm text-muted-foreground mb-2">Data de Nascimento</p>
-//             <p className="text-lg font-medium text-foreground">
-//               {formatarData(motorista.dataNascimento)} ({calcularIdade(motorista.dataNascimento)} anos)
-//             </p>
-//           </div>
-//           <div>
-//             <p className="text-sm text-muted-foreground mb-2">Data de Cadastro</p>
-//             <p className="text-lg font-medium text-foreground">{formatarData(motorista.dataCadastro)}</p>
-//           </div>
-//         </div>
-//       </Card>
-
-//       {/* Endereço */}
-//       <Card className="p-6">
-//         <h2 className="text-xl font-semibold text-foreground mb-4">Endereço</h2>
-//         <div className="space-y-4">
-//           <div>
-//             <p className="text-sm text-muted-foreground mb-1">Rua e Número</p>
-//             <p className="text-foreground">{motorista.endereco}</p>
-//           </div>
-//           <div className="grid grid-cols-2 gap-4">
-//             <div>
-//               <p className="text-sm text-muted-foreground mb-1">Cidade</p>
-//               <p className="text-foreground">{motorista.cidade}</p>
-//             </div>
-//             <div>
-//               <p className="text-sm text-muted-foreground mb-1">Província</p>
-//               <p className="text-foreground">{motorista.provincia}</p>
-//             </div>
-//           </div>
-//         </div>
-//       </Card>
-
-//       {/* Diálogo de Confirmação */}
-//       <AlertDialog open={mostrarConfirmacao} onOpenChange={setMostrarConfirmacao}>
-//         <AlertDialogContent>
-//           <AlertDialogHeader>
-//             <AlertDialogTitle>Deletar Motorista</AlertDialogTitle>
-//             <AlertDialogDescription>altaoutro01/04/2026
-//               Tem certeza que deseja deletar {motorista.nome}? Esta ação não pode ser desfeita.
-//             </AlertDialogDescription>
-//           </AlertDialogHeader>
-//           <div className="flex gap-3 justify-end">dataCadastro
-//             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-//             <AlertDialogAction onClick={handleDeletar} className="bg-destructive hover:bg-destructive/90">
-//               Deletar
-//             </AlertDialogAction>
-//           </div>
-//         </AlertDialogContent>
-//       </AlertDialog>
-//     </div>
-//   );
-// }
+function Row({ label, value }: any) {
+  return (
+    <div className="flex justify-between">
+      <span className="text-slate-500">{label}</span>
+      <span className="font-medium text-slate-800">{value}</span>
+    </div>
+  );
+}

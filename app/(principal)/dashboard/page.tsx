@@ -5,14 +5,27 @@ import { useAutenticacao } from '@/app/contexto/AutenticacaoContexto';
 import { Card } from '@/components/ui/card';
 import { Truck, Users, MapPin, Wrench, ArrowUpRight } from 'lucide-react';
 
+import { useEffect, useState } from "react";
+import { getDashboard } from "@/lib/dashboard";
+
 export default function PaginaDashboard() {
   const { usuarioAtual } = useAutenticacao();
 
+
+
+    const [data, setData] = useState<any>(null);
+  
+    useEffect(() => {
+      getDashboard().then(setData);
+    }, []);
+  
+    if (!data) return <p>Carregando...</p>;
+
   const cartasEstatisticas = [
-    { titulo: 'Veículos Ativos', valor: 24, desc: 'Frota em operação', icone: Truck, cor: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/20' },
-    { titulo: 'Motoristas', valor: 15, desc: 'Equipe ativa', icone: Users, cor: 'text-purple-400', bg: 'bg-purple-500/10', border: 'border-purple-500/20' },
-    { titulo: 'Viagens Ativas', valor: 8, desc: 'Em progresso', icone: MapPin, cor: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20' },
-    { titulo: 'Manutenção', valor: 3, desc: 'Serviços pendentes', icone: Wrench, cor: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/20' },
+    { titulo: 'Veículos Ativos', valor: data.veiculos.ativos, desc: 'Frota em operação', icone: Truck, cor: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/20' },
+    { titulo: 'Motoristas', valor: data.motoristas.ativos, desc: 'Equipe ativa', icone: Users, cor: 'text-purple-400', bg: 'bg-purple-500/10', border: 'border-purple-500/20' },
+    { titulo: 'Viagens Ativas', valor: data.viagens.emAndamento, desc: 'Em progresso', icone: MapPin, cor: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20' },
+    { titulo: 'Manutenção', valor: data.manutencoes.status.emAndamento, desc: 'Serviços pendentes', icone: Wrench, cor: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/20' },
   ];
 
   return (
