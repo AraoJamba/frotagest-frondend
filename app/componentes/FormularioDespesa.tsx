@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Despesa } from "@/app/tipos/indices";
+import { useDados } from "../contexto/DadosContexto";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,6 +31,8 @@ export function FormularioDespesa({
   carregando = false,
 }: PropsFormularioDespesa) {
 
+  const { veiculos } = useDados();
+
   const router = useRouter();
 
   const [dados, setDados] = useState<Despesa>(
@@ -50,6 +53,8 @@ export function FormularioDespesa({
 
   const validarFormulario = () => {
     const novosErros: Record<string, string> = {};
+    
+    
 
     if (!dados.data) novosErros.data = "Data obrigatória";
     if (!dados.tipo) novosErros.tipo = "Tipo inválido";
@@ -186,7 +191,7 @@ export function FormularioDespesa({
           </div>
 
           {/* MOTORISTA */}
-          <div className="space-y-2">
+          {/*<div className="space-y-2">
             <Label className="text-xs font-bold uppercase tracking-wider text-slate-500">
               Motorista
             </Label>
@@ -197,20 +202,30 @@ export function FormularioDespesa({
               className={inputStyle}
               placeholder="ID ou nome"
             />
-          </div>
+          </div>*/}
 
           {/* VEÍCULO */}
           <div className="space-y-2">
             <Label className="text-xs font-bold uppercase tracking-wider text-slate-500">
-              Veículo
+              Selecione um veículo
             </Label>
 
-            <Input
-              value={dados.veiculo_id}
-              onChange={(e) => handleChange("veiculo_id", e.target.value)}
-              className={`${inputStyle} ${erros.veiculo_id && 'border-red-500'}`}
-              placeholder="Matrícula ou ID"
-            />
+            <Select
+              value={dados.veiculo_id || ""}
+              onValueChange={(v) => handleChange('veiculo_id', v)}
+            >
+              <SelectTrigger className={inputStyle}>
+                <SelectValue placeholder="Selecionar veículo" />
+              </SelectTrigger>
+
+              <SelectContent>
+                {veiculos.map((v) => (
+                  <SelectItem key={v.id} value={v.id}>
+                    {v.marca} {v.modelo} ({v.placa})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
             {erros.veiculo_id && (
               <p className="text-xs text-red-500">{erros.veiculo_id}</p>

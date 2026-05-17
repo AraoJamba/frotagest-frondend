@@ -58,12 +58,12 @@ const itensMenuPrincipal: ItemMenuNavegacao[] = [
     icone: BadgeDollarSign,
     papelRequired: ['admin', 'gerente'],
   },
-  {
-    nome: 'Serviços',
-    rota: '/servicos',
-    icone: Wrench,
-    papelRequired: ['admin', 'gerente'],
-  },
+  // {
+  //   nome: 'Serviços',
+  //   rota: '/servicos',
+  //   icone: Wrench,
+  //   papelRequired: ['admin', 'gerente'],
+  // },
   {
     nome: 'Manutenções',
     rota: '/manutencoes',

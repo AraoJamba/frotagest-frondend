@@ -93,6 +93,13 @@ export interface Despesa {
   motorista_id?: string;
   recibo?: string;
   pago: '0' | '1';
+
+  veiculo?: {
+    id: string,
+    placa: string,
+    marca: string,
+    modelo: string
+  }
 }
 
 export interface PostoCombustivel {
@@ -105,7 +112,7 @@ export interface PostoCombustivel {
   precoCombustivel: number;
   gasoleo: number;
   gasolina: number;
-  dataCadastro: string;
+  data_cadastro: string;
   ativo: boolean;
 }
 

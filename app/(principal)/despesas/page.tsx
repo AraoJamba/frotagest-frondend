@@ -19,7 +19,7 @@ import {
 } from '@/components/ui/alert-dialog';
 
 export default function PaginaMotoristas() {
-  const { despesas, deletarDespesa } = useDados();
+  const { despesas, deletarDespesa, veiculos } = useDados();
   const [busca, setBusca] = useState('');
   const [idParaDeletar, setIdParaDeletar] = useState<string | null>(null);
 
@@ -78,7 +78,7 @@ export default function PaginaMotoristas() {
                 <tr>
                   <th className="px-6 py-3 text-left text-sm font-semibold text-foreground">Tipo</th>
                   <th className="px-6 py-3 text-left text-sm font-semibold text-foreground">Veiculo</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-foreground">Motorista</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-foreground">Custo</th>
                   <th className="px-6 py-3 text-left text-sm font-semibold text-foreground">Data</th>
                   <th className="px-6 py-3 text-center text-sm font-semibold text-foreground">Ações</th>
                 </tr>
@@ -87,8 +87,8 @@ export default function PaginaMotoristas() {
                 {despesasFiltrados.map((despesa) => (
                   <tr key={despesa.id} className="hover:bg-muted/50 transition-colors">
                     <td className="px-6 py-4 text-sm"><Badge variant="outline" className='capitalize'>{despesa.tipo}</Badge></td>
-                    <td className="px-6 py-4 text-sm text-muted-foreground">{despesa.veiculo_id}</td>
-                    <td className="px-6 py-4 text-sm text-muted-foreground">{despesa.motorista_id}</td>
+                    <td className="px-6 py-4 text-sm text-muted-foreground">{"--------"}</td>
+                    <td className="px-6 py-4 text-sm text-muted-foreground">{despesa.valor}</td>
                     <td className="px-6 py-4 text-sm text-muted-foreground">{despesa.data}</td>
                     <td className="px-6 py-4 text-center">
                       <div className="flex items-center justify-center gap-2">

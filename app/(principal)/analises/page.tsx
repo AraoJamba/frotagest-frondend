@@ -3,14 +3,24 @@
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { formatarNumeros, formatarMoeda } from "@/app/funcoes/funcoes";
-import { 
-  BarChart, Bar, LineChart, Line, XAxis, YAxis, 
-  CartesianGrid, Tooltip, Legend, ResponsiveContainer, 
-  PieChart, Pie, Cell 
-} from 'recharts';
+import {
+  BarChart,
+  Bar,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+} from "recharts";
 import { TrendingUp, Fuel, Gauge, Navigation } from "lucide-react";
 
-const CORES = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#6366f1'];
+const CORES = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#6366f1"];
 
 export default function PaginaAnalises() {
   const [dadosCustos, setDadosCustos] = useState<any[]>([]);
@@ -20,15 +30,18 @@ export default function PaginaAnalises() {
   useEffect(() => {
     async function carregarDados() {
       try {
-        const resDespesas = await fetch("http://localhost:8000/despesas/analises/resumo");
+        const resDespesas = await fetch(
+          "http://localhost:8000/despesas/analises/resumo",
+        );
         const despesas = await resDespesas.json();
 
-        const resViagens = await fetch("http://localhost:8000/viagens/analises/resumo");
+        const resViagens = await fetch(
+          "http://localhost:8000/viagens/analises/resumo",
+        );
         const viagens = await resViagens.json();
 
         setDadosCustos(despesas);
         setDadosKm(viagens);
-
       } catch (error) {
         console.error("Erro ao carregar dados:", error);
       }
@@ -39,14 +52,16 @@ export default function PaginaAnalises() {
 
   // calcular custo total corretamente
   useEffect(() => {
-    const total = dadosCustos.reduce((acc, curr) => 
-      acc +
-      (curr.combustivel || 0) +
-      (curr.manutencao || 0) +
-      (curr.pneu || 0) +
-      (curr.lavagem || 0) +
-      (curr.outro || 0)
-    , 0);
+    const total = dadosCustos.reduce(
+      (acc, curr) =>
+        acc +
+        (curr.combustivel || 0) +
+        (curr.manutencao || 0) +
+        (curr.pneu || 0) +
+        (curr.lavagem || 0) +
+        (curr.outro || 0),
+      0,
+    );
 
     setCustoTotal(total);
   }, [dadosCustos]);
@@ -58,7 +73,11 @@ export default function PaginaAnalises() {
         <div className="bg-[#1e293b] border border-slate-700 p-3 rounded-lg shadow-xl">
           <p className="text-slate-100 font-bold mb-1">{label}</p>
           {payload.map((item: any, i: number) => (
-            <p key={i} className="text-xs" style={{ color: item.color || item.fill }}>
+            <p
+              key={i}
+              className="text-xs"
+              style={{ color: item.color || item.fill }}
+            >
               {item.name}: {formatarMoeda(item.value)}
             </p>
           ))}
@@ -70,16 +89,58 @@ export default function PaginaAnalises() {
 
   // pie dinâmica (baseado nos custos reais)
   const dadosCustosPie = [
-    { name: 'Combustível', value:  Math.round(custoTotal) ? Math.round((dadosCustos.reduce((a,c)=>a+(c.combustivel||0),0)/custoTotal)*100) : 0 },
-    { name: 'Manutenção', value: Math.round(custoTotal) ? Math.round((dadosCustos.reduce((a,c)=>a+(c.manutencao||0),0)/custoTotal)*100) : 0 },
-    { name: 'Pneus', value: Math.round(custoTotal) ? Math.round((dadosCustos.reduce((a,c)=>a+(c.pneu||0),0)/custoTotal)*100) : 0 },
-    { name: 'Lavagem', value: Math.round(custoTotal) ? Math.round((dadosCustos.reduce((a,c)=>a+(c.lavagem||0),0)/custoTotal)*100) : 0 },
-    { name: 'Outros', value: Math.round(custoTotal) ? Math.round((dadosCustos.reduce((a,c)=>a+(c.outro||0),0)/custoTotal)*100) : 0 },
+    {
+      name: "Combustível",
+      value: Math.round(custoTotal)
+        ? Math.round(
+            (dadosCustos.reduce((a, c) => a + (c.combustivel || 0), 0) /
+              custoTotal) *
+              100,
+          )
+        : 0,
+    },
+    {
+      name: "Manutenção",
+      value: Math.round(custoTotal)
+        ? Math.round(
+            (dadosCustos.reduce((a, c) => a + (c.manutencao || 0), 0) /
+              custoTotal) *
+              100,
+          )
+        : 0,
+    },
+    {
+      name: "Pneus",
+      value: Math.round(custoTotal)
+        ? Math.round(
+            (dadosCustos.reduce((a, c) => a + (c.pneu || 0), 0) / custoTotal) *
+              100,
+          )
+        : 0,
+    },
+    {
+      name: "Lavagem",
+      value: Math.round(custoTotal)
+        ? Math.round(
+            (dadosCustos.reduce((a, c) => a + (c.lavagem || 0), 0) /
+              custoTotal) *
+              100,
+          )
+        : 0,
+    },
+    {
+      name: "Outros",
+      value: Math.round(custoTotal)
+        ? Math.round(
+            (dadosCustos.reduce((a, c) => a + (c.outro || 0), 0) / custoTotal) *
+              100,
+          )
+        : 0,
+    },
   ];
 
   return (
     <div className="min-h-screen bg-white text-slate-100 p-6 lg:p-10 space-y-10">
-      
       {/* Cabeçalho */}
       <header>
         <h1 className="text-2xl font tracking-tight text-white">
@@ -89,18 +150,37 @@ export default function PaginaAnalises() {
 
       {/* Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-        <MetricCard title="Quilometragem" value={`${formatarNumeros(dadosKm.reduce((a,c)=>a+(c.quilometragem||0),0))} km`} sub="Últimos meses" icon={<Gauge className="w-5 h-5 text-blue-400" />} />
-        
-        <MetricCard title="Custo Total" value={formatarMoeda(custoTotal)} sub="Operação completa" icon={<TrendingUp className="w-5 h-5 text-emerald-400" />} />
-        
-        <MetricCard title="Consumo Médio" value="-- km/L" sub="Baseado nas viagens" icon={<Fuel className="w-5 h-5 text-amber-400" />} />
-        
-        <MetricCard title="Viagens" value={dadosKm.length} sub="Registros mensais" icon={<Navigation className="w-5 h-5 text-purple-400" />} />
+        <MetricCard
+          title="Quilometragem"
+          value={`${formatarNumeros(dadosKm.reduce((a, c) => a + (c.quilometragem || 0), 0))} km`}
+          sub="Últimos meses"
+          icon={<Gauge className="w-5 h-5 text-blue-400" />}
+        />
+
+        <MetricCard
+          title="Custo Total"
+          value={formatarMoeda(custoTotal)}
+          sub="Operação completa"
+          icon={<TrendingUp className="w-5 h-5 text-emerald-400" />}
+        />
+
+        <MetricCard
+          title="Consumo Médio"
+          value="-- km/L"
+          sub="Baseado nas viagens"
+          icon={<Fuel className="w-5 h-5 text-amber-400" />}
+        />
+
+        <MetricCard
+          title="Viagens"
+          value={dadosKm.length}
+          sub="Registros mensais"
+          icon={<Navigation className="w-5 h-5 text-purple-400" />}
+        />
       </div>
 
       {/* Gráficos */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        
         {/* Custos */}
         <Card className="bg-white border-white/5 p-6 shadow-2xl">
           <h2 className="text-lg mb-6">Fluxo de Custos Mensal</h2>
@@ -129,7 +209,12 @@ export default function PaginaAnalises() {
               <XAxis dataKey="mes" />
               <YAxis />
               <Tooltip content={<CustomTooltip />} />
-              <Line type="monotone" dataKey="quilometragem" stroke="#3b82f6" strokeWidth={3} />
+              <Line
+                type="monotone"
+                dataKey="quilometragem"
+                stroke="#3b82f6"
+                strokeWidth={3}
+              />
             </LineChart>
           </ResponsiveContainer>
         </Card>
@@ -140,7 +225,12 @@ export default function PaginaAnalises() {
         <h2 className="text-xl mb-6">Composição de Gastos</h2>
         <ResponsiveContainer width="100%" height={300}>
           <PieChart>
-            <Pie data={dadosCustosPie} dataKey="value" innerRadius={80} outerRadius={110}>
+            <Pie
+              data={dadosCustosPie}
+              dataKey="value"
+              innerRadius={80}
+              outerRadius={110}
+            >
               {dadosCustosPie.map((_, i) => (
                 <Cell key={i} fill={CORES[i % CORES.length]} />
               ))}
@@ -148,20 +238,20 @@ export default function PaginaAnalises() {
             <Tooltip />
           </PieChart>
         </ResponsiveContainer>
-        
-        //             <div className="space-y-3">
-        //               {dadosCustos.map((item, i) => (
-        //                 <div key={i} className="flex items-center justify-between text-sm">
-        //                   <div className="flex items-center gap-2 text-slate-300 font-medium">
-        //                     <div className="w-2 h-2 rounded-full" style={{backgroundColor: CORES[i % CORES.length]}} />
-        //                     {item.name}
-        //                   </div>
-        //                   <span className="text-slate-500">{item.value}%</span>
-        //                 </div>
-        //               ))}
-        //             </div>
-        //           </div>
-        
+
+        {dadosCustosPie.map((item, i) => (
+          <div key={i} className="flex items-center justify-between text-sm">
+            <div className="flex items-center gap-2 text-slate-300 font-medium">
+              <div
+                className="w-2 h-2 rounded-full"
+                style={{ backgroundColor: CORES[i % CORES.length] }}
+              />
+              {item.name}
+            </div>
+            <span className="text-slate-500">{item.value}%</span>
+          </div>
+        ))}
+
       </Card>
     </div>
   );
@@ -180,22 +270,15 @@ function MetricCard({ title, value, sub, icon }: any) {
   );
 }
 
-
-
-
-
-
-
-
 // "use client";
 
 // import { useEffect, useState } from "react";
 // import { Card } from "@/components/ui/card";
 // import { formatarNumeros, formatarMoeda } from "@/app/funcoes/funcoes";
-// import { 
-//   BarChart, Bar, LineChart, Line, XAxis, YAxis, 
-//   CartesianGrid, Tooltip, Legend, ResponsiveContainer, 
-//   PieChart, Pie, Cell 
+// import {
+//   BarChart, Bar, LineChart, Line, XAxis, YAxis,
+//   CartesianGrid, Tooltip, Legend, ResponsiveContainer,
+//   PieChart, Pie, Cell
 // } from 'recharts';
 // import { TrendingUp, Fuel, Gauge, Navigation } from "lucide-react";
 
@@ -229,12 +312,12 @@ function MetricCard({ title, value, sub, icon }: any) {
 
 // export default function PaginaAnalises() {
 //   const [custoTotal, setCustoTotal] = useState(0);
-  
+
 //   const [dadosCustos, setDadosCustos] = useState<any[]>([]);
 //   const [dadosKm, setDadosKm] = useState<any[]>([]);
 
 //   // useEffect(() => {
-//   //   const total = dadosCustos.reduce((acc, curr) => 
+//   //   const total = dadosCustos.reduce((acc, curr) =>
 //   //     acc + curr.Combustivel + curr.Manutencao + curr.Pneus + curr.Lavagem + curr.Outros, 0
 //   //   );
 //   //   setCustoTotal(total);
@@ -244,23 +327,23 @@ function MetricCard({ title, value, sub, icon }: any) {
 //       try {
 //         const resDespesas = await fetch("http://localhost:8000/despesas/analises/resumo");
 //         const despesas = await resDespesas.json();
-  
+
 //         const resViagens = await fetch("http://localhost:8000/viagens/analises/resumo");
 //         const viagens = await resViagens.json();
-  
+
 //         setDadosCustos(despesas);
 //         setDadosKm(viagens);
-  
+
 //       } catch (error) {
 //         console.error("Erro ao carregar dados:", error);
 //       }
 //     }
-  
+
 //     carregarDados();
 //   }, []);
 
 //   useEffect(() => {
-//     const total = dadosCustos.reduce((acc, curr) => 
+//     const total = dadosCustos.reduce((acc, curr) =>
 //       acc +
 //       (curr.combustivel || 0) +
 //       (curr.manutencao || 0) +
@@ -268,7 +351,7 @@ function MetricCard({ title, value, sub, icon }: any) {
 //       (curr.lavagem || 0) +
 //       (curr.outro || 0)
 //     , 0);
-  
+
 //     setCustoTotal(total);
 //   }, [dadosCustos]);
 
@@ -291,7 +374,7 @@ function MetricCard({ title, value, sub, icon }: any) {
 
 //   return (
 //     <div className="min-h-screen bg-[#0B0F1A] text-slate-100 p-6 lg:p-10 space-y-10">
-      
+
 //       {/* Cabeçalho */}
 //       <header>
 //         <h1 className="text-4xl font-light tracking-tight text-white">
@@ -310,7 +393,7 @@ function MetricCard({ title, value, sub, icon }: any) {
 
 //       {/* Gráficos Principais */}
 //       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        
+
 //         {/* Gráfico de Barras */}
 //         <Card className="bg-[#161B29] border-white/5 p-6 shadow-2xl overflow-hidden">
 //           <div className="flex items-center justify-between mb-8">
@@ -343,12 +426,12 @@ function MetricCard({ title, value, sub, icon }: any) {
 //               <XAxis dataKey="mes" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} />
 //               <YAxis axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} />
 //               <Tooltip content={<CustomTooltip />} />
-//               <Line 
-//                 type="monotone" 
-//                 dataKey="quilometragem" 
-//                 stroke="#3b82f6" 
-//                 strokeWidth={3} 
-//                 dot={{ r: 4, fill: '#3b82f6', strokeWidth: 2, stroke: '#0B0F1A' }} 
+//               <Line
+//                 type="monotone"
+//                 dataKey="quilometragem"
+//                 stroke="#3b82f6"
+//                 strokeWidth={3}
+//                 dot={{ r: 4, fill: '#3b82f6', strokeWidth: 2, stroke: '#0B0F1A' }}
 //                 activeDot={{ r: 6, strokeWidth: 0 }}
 //               />
 //             </LineChart>
@@ -362,7 +445,7 @@ function MetricCard({ title, value, sub, icon }: any) {
 //           <div>
 //             <h2 className="text-2xl font-semibold mb-4 text-white">Composição de Gastos</h2>
 //             <p className="text-slate-400 mb-6 leading-relaxed">
-//               O combustível continua sendo o principal driver de custo, representando 35% da operação. 
+//               O combustível continua sendo o principal driver de custo, representando 35% da operação.
 //               Considere rotas otimizadas para reduzir este índice.
 //             </p>
 //             <div className="space-y-3">
@@ -377,7 +460,7 @@ function MetricCard({ title, value, sub, icon }: any) {
 //               ))}
 //             </div>
 //           </div>
-          
+
 //           <div className="flex justify-center h-75">
 //             <ResponsiveContainer width="100%" height="100%">
 //               <PieChart>
@@ -416,12 +499,6 @@ function MetricCard({ title, value, sub, icon }: any) {
 //     </Card>
 //   );
 // }
-
-
-
-
-
-
 
 // // 'use client';
 
@@ -463,7 +540,7 @@ function MetricCard({ title, value, sub, icon }: any) {
 // //   custoTotal += dadosCustos[i].Combustivel;
 // //   custoTotal += dadosCustos[i].Pneus;
 // //   custoTotal += dadosCustos[i].Outros;
-  
+
 // // }
 
 // // const CORES = ['#7c3aed', '#06b6d4', '#f59e0f', '#ef4444', '#333333'];

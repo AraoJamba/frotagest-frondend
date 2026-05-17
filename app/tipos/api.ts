@@ -27,3 +27,22 @@ export interface ViagemAPI {
     modelo: string;
   };
 }
+
+export interface Despesa {
+  id: string;
+  tipo: 'combustivel' | 'manutencao' | 'seguro' | 'pneu' | 'lavagem' | 'outro';
+  valor: number;
+  data: string;
+  descricao: string;
+  veiculo_id?: string;
+  motorista_id?: string;
+  recibo?: string;
+  pago: '0' | '1';
+
+  veiculo: {
+    id: string;
+    placa: string;
+    marca: string;
+    modelo: string;
+  };
+}
