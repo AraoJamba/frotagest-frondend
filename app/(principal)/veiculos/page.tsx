@@ -55,7 +55,7 @@ export default function PaginaVeiculos() {
 
       {/* Barra de Busca */}
       <Card className="p-4">
-        <div className="relative">
+        <div className="relative border-[0.5px] rounded-xl border-slate-200 bg-slate-50 text-sm shadow-none focus-visible:ring-2 focus-visible:ring-blue-500/20">
           <Search className="absolute left-3 top-3 w-5 h-5 text-muted-foreground" />
           <Input
             placeholder="Buscar por placa, modelo ou marca..."
@@ -75,7 +75,7 @@ export default function PaginaVeiculos() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-muted border-b border-border">
+              <thead className="text-white border-b border-border">
                 <tr>
                   <th className="px-6 py-3 text-left text-sm font-semibold text-foreground">Placa</th>
                   <th className="px-6 py-3 text-left text-sm font-semibold text-foreground">Modelo</th>

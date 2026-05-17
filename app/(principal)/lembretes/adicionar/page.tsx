@@ -6,6 +6,7 @@ import { useState } from 'react';
 
 import { Lembrete } from '@/app/tipos/indices';
 import { FormularioLembrete } from '@/app/componentes/FormularioLembrete';
+import { Card } from '@/components/ui/card';
 
 export default function PaginaAdicionarLembrete() {
   const router = useRouter();
@@ -41,10 +42,10 @@ export default function PaginaAdicionarLembrete() {
       </div>
 
       {/* FORMULÁRIO */}
-      <FormularioLembrete
-        onSubmit={handleSubmit}
-        carregando={carregando}
-      />
+      <Card className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <FormularioLembrete onSubmit={handleSubmit} carregando={carregando} />
+      </Card>
+      
 
     </div>
   );

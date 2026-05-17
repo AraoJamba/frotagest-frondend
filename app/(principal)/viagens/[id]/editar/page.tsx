@@ -1,13 +1,14 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter, useParams } from 'next/navigation';
-import { useDados } from '@/app/contexto/DadosContexto';
-import { FormularioViagem } from '@/app/componentes/FormularioViagem';
-import { Viagem } from '@/app/tipos/indices';
+import { useState, useEffect } from "react";
+import { useRouter, useParams } from "next/navigation";
+import { useDados } from "@/app/contexto/DadosContexto";
+import { FormularioViagem } from "@/app/componentes/FormularioViagem";
+import { Viagem } from "@/app/tipos/indices";
 
-import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
+import { Card } from "@/components/ui/card";
 
 export default function PaginaEditarViagem() {
   const router = useRouter();
@@ -31,9 +32,7 @@ export default function PaginaEditarViagem() {
   if (!viagem) {
     return (
       <div className="text-center py-10">
-        <p className="text-muted-foreground">
-          Viagem não encontrada
-        </p>
+        <p className="text-muted-foreground">Viagem não encontrada</p>
       </div>
     );
   }
@@ -44,9 +43,9 @@ export default function PaginaEditarViagem() {
 
       await atualizarViagem(viagem.id, dadosAtualizados);
 
-      router.push('/viagens');
+      router.push("/viagens");
     } catch (error) {
-      console.error('Erro ao atualizar viagem:', error);
+      console.error("Erro ao atualizar viagem:", error);
     } finally {
       setCarregando(false);
     }
@@ -54,7 +53,6 @@ export default function PaginaEditarViagem() {
 
   return (
     <div className="space-y-6">
-
       {/* HEADER PADRÃO */}
       <div className="flex items-center gap-4">
         <Button
@@ -67,9 +65,7 @@ export default function PaginaEditarViagem() {
         </Button>
 
         <div>
-          <h1 className="text-3xl font-bold text-foreground">
-            Editar Viagem
-          </h1>
+          <h1 className="text-3xl font-bold text-foreground">Editar Viagem</h1>
           <p className="text-muted-foreground mt-2">
             Atualize os dados da viagem
           </p>
@@ -77,22 +73,16 @@ export default function PaginaEditarViagem() {
       </div>
 
       {/* FORM */}
-      <FormularioViagem
-        viagem={viagem}
-        onSubmit={handleSubmit}
-        carregando={carregando}
-      />
-
+      <Card className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <FormularioViagem
+          viagem={viagem}
+          onSubmit={handleSubmit}
+          carregando={carregando}
+        />
+      </Card>
     </div>
   );
 }
-
-
-
-
-
-
-
 
 // 'use client';
 
@@ -105,9 +95,6 @@ export default function PaginaEditarViagem() {
 // import { Button } from '@/components/ui/button';
 // import { ArrowLeft } from 'lucide-react';
 
-
-
-
 // export default function PaginaEditarViagem() {
 //   const router = useRouter();
 //   const params = useParams();
@@ -116,9 +103,6 @@ export default function PaginaEditarViagem() {
 //   const { obterViagem, atualizarViagem } = useDados();
 //   const [viagem, setViagem] = useState<Viagem | null>(null);
 //   const [carregando, setCarregando] = useState(false);
-
-
-
 
 //   useEffect(() => {
 //     const id = params.id as string;
@@ -164,3 +148,7 @@ export default function PaginaEditarViagem() {
 //     </div>
 //   );
 // }
+
+
+//7t4itmcb
+// 7T4ITMCB

@@ -66,11 +66,7 @@ export default function PaginaEditarDespesa() {
 
       {/* FORMULÁRIO */}
       <Card className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-              <FormularioDespesa
-        despesa={despesa}
-        onSubmit={handleSubmit}
-        carregando={carregando}
-      />
+        <FormularioDespesa despesa={despesa} onSubmit={handleSubmit} carregando={carregando} />
       </Card>
 
     </div>

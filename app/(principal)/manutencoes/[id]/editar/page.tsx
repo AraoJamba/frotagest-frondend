@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter, useParams } from 'next/navigation';
-import { useDados } from '@/app/contexto/DadosContexto';
+import { useState, useEffect } from "react";
+import { useRouter, useParams } from "next/navigation";
+import { useDados } from "@/app/contexto/DadosContexto";
 
-import { ManutencaoVeiculo } from '@/app/tipos/indices';
-import { Card } from '@/components/ui/card';
-import { FormularioManutencao } from '@/app/componentes/FormularioManutencoes';
+import { ManutencaoVeiculo } from "@/app/tipos/indices";
+import { Card } from "@/components/ui/card";
+import { FormularioManutencao } from "@/app/componentes/FormularioManutencoes";
 
 export default function PaginaEditarManutencao() {
   const router = useRouter();
@@ -30,9 +30,7 @@ export default function PaginaEditarManutencao() {
   if (!manutencao) {
     return (
       <Card className="p-8 text-center">
-        <p className="text-muted-foreground">
-          Manutenção não encontrada
-        </p>
+        <p className="text-muted-foreground">Manutenção não encontrada</p>
       </Card>
     );
   }
@@ -43,9 +41,9 @@ export default function PaginaEditarManutencao() {
 
       await atualizarManutencao(manutencao.id, dadosAtualizados);
 
-      router.push('/servicos'); // ou /manutencoes se quiser padronizar melhor
+      router.push("/servicos"); // ou /manutencoes se quiser padronizar melhor
     } catch (error) {
-      console.error('Erro ao atualizar manutenção:', error);
+      console.error("Erro ao atualizar manutenção:", error);
     } finally {
       setCarregando(false);
     }
@@ -53,7 +51,6 @@ export default function PaginaEditarManutencao() {
 
   return (
     <div className="space-y-6">
-
       {/* HEADER PADRÃO */}
       <div>
         <h1 className="text-3xl font-bold text-foreground">
@@ -65,18 +62,17 @@ export default function PaginaEditarManutencao() {
       </div>
 
       {/* FORMULÁRIO */}
-      <FormularioManutencao
-        manutencao={manutencao}
-        onSubmit={handleSubmit}
-        carregando={carregando}
-      />
 
+      <Card className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <FormularioManutencao
+          manutencao={manutencao}
+          onSubmit={handleSubmit}
+          carregando={carregando}
+        />
+      </Card>
     </div>
   );
 }
-
-
-
 
 // 'use client';
 

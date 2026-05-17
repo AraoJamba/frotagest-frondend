@@ -80,13 +80,13 @@ const viagensFiltrados = (viagens || []).filter(v =>
 
       {/* Barra de Busca */}
       <Card className="p-4">
-        <div className="relative">
+        <div className="relative border-[0.5px] rounded-xl border-slate-200 bg-slate-50 text-sm shadow-none focus-visible:ring-2 focus-visible:ring-blue-500/20">
           <Search className="absolute left-3 top-3 w-5 h-5 text-muted-foreground" />
           <Input
             placeholder="Buscar por origem, destino ou data..."
             value={busca}
             onChange={(e) => setBusca(e.target.value)}
-            className="pl-10"
+            className="pl-10 rounded-2xl outline-[0.5px]"
           />
         </div>
       </Card>

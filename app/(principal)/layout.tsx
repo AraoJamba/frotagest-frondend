@@ -66,7 +66,7 @@ export default function LayoutSecundario({
 
           <div className="text-center">
             <p className="text-sm font-semibold text-slate-700">
-              Autenticando usuário
+              A Carregar
             </p>
 
             <p className="text-xs text-slate-500 mt-1">

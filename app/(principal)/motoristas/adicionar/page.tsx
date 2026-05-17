@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
-import { useDados } from '@/app/contexto/DadosContexto';
-import { FormularioMotorista } from '@/app/componentes/FormularioMotorista';
-import { Motorista } from '@/app/tipos/indices';
+import { useDados } from "@/app/contexto/DadosContexto";
+import { FormularioMotorista } from "@/app/componentes/FormularioMotorista";
+import { Motorista } from "@/app/tipos/indices";
 
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft } from "lucide-react";
 
 export default function PaginaAdicionarMotorista() {
   const router = useRouter();
@@ -23,7 +23,7 @@ export default function PaginaAdicionarMotorista() {
 
       await adicionarMotorista(motorista);
 
-      router.push('/motoristas');
+      router.push("/motoristas");
     } catch (error) {
       console.error("Erro ao criar motorista:", error);
     } finally {
@@ -33,10 +33,8 @@ export default function PaginaAdicionarMotorista() {
 
   return (
     <div className="space-y-8">
-
       {/* HEADER */}
       <div className="flex items-center justify-between">
-
         <div className="flex items-center gap-4">
           <Button
             variant="ghost"
@@ -56,24 +54,15 @@ export default function PaginaAdicionarMotorista() {
             </p>
           </div>
         </div>
-
       </div>
 
       {/* FORM CARD */}
       <Card className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-
-        <FormularioMotorista
-          onSubmit={handleSubmit}
-          carregando={carregando}
-        />
-
+        <FormularioMotorista onSubmit={handleSubmit} carregando={carregando} />
       </Card>
-
     </div>
   );
 }
-
-
 
 // 'use client';
 
@@ -115,10 +104,6 @@ export default function PaginaAdicionarMotorista() {
 //     </div>
 //   );
 // }
-
-
-
-
 
 // /*
 // 'use client';

@@ -82,7 +82,7 @@ export default function PaginaDetalhesMotorista() {
 
   if (loading) {
     return (
-      <div className="flex h-[300px] items-center justify-center">
+      <div className="flex h-75 items-center justify-center">
         <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-blue-500" />
       </div>
     );
@@ -97,18 +97,26 @@ export default function PaginaDetalhesMotorista() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8">
+    <div className="space-y-6">
 
-      {/* HEADER */}
-      <div className="flex items-center justify-between">
-        <Button variant="ghost" onClick={() => router.back()}>
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Voltar
+      {/* HEADER PADRÃO */}
+      <div className="flex items-center gap-4">
+        <Button variant="ghost" size="icon" onClick={() => router.back()}>
+          <ArrowLeft className="w-5 h-5" />
         </Button>
+
+        <div className="flex-1">
+          <h1 className="text-3xl font-bold text-foreground">
+            Detalhes do motorista
+          </h1>
+          <p className="text-muted-foreground mt-1">
+            {motorista.nome}
+          </p>
+        </div>
 
         <div className="flex gap-2">
           <Link href={`/motoristas/${motorista.id}/editar`}>
-            <Button variant="outline" className="gap-2">
+            <Button className="gap-2">
               <Edit className="w-4 h-4" />
               Editar
             </Button>
@@ -125,111 +133,89 @@ export default function PaginaDetalhesMotorista() {
         </div>
       </div>
 
-      {/* PERFIL */}
-      <Card className="p-8 rounded-3xl border border-slate-200 bg-white">
-        <div className="flex items-center gap-6">
+      {/* CARD PRINCIPAL */}
+      <Card className="p-6 space-y-6">
 
-          <div className="h-20 w-20 flex items-center justify-center rounded-2xl bg-blue-600 text-white text-xl font-bold">
-            {motorista.nome.slice(0, 2).toUpperCase()}
+        {/* INFO GERAL */}
+        <Card className="p-4 space-y-4 border">
+          <h2 className="text-sm font-semibold text-muted-foreground uppercase">
+            Informações Gerais
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Item label="Nome" value={motorista.nome} />
+            <Item label="Telefone" value={motorista.telefone} />
+            <Item label="E-mail" value={motorista.email} />
+            <Item label="Numero do BI" value={motorista.numeroBI} />
+            <Item label="Data de Nascimento" value={formatarData(motorista.dataNascimento)} />
           </div>
-
-          <div>
-            <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-bold text-slate-800">
-                {motorista.nome}
-              </h1>
-
-              <Badge className={motorista.ativo
-                ? "bg-green-50 text-green-700"
-                : "bg-slate-100 text-slate-500"}>
-                {motorista.ativo ? "Ativo" : "Inativo"}
-              </Badge>
-            </div>
-
-            <div className="mt-2 flex gap-4 text-sm text-slate-500">
-              <span className="flex items-center gap-1">
-                <Mail className="w-4 h-4" /> {motorista.email}
-              </span>
-              <span className="flex items-center gap-1">
-                <Phone className="w-4 h-4" /> {motorista.telefone}
-              </span>
-            </div>
-          </div>
-
-        </div>
-      </Card>
-
-      {/* GRID */}
-      <div className="grid lg:grid-cols-3 gap-6">
-
-        {/* DOCUMENTOS */}
-        <Card className="lg:col-span-2 border border-slate-200 bg-white">
-          <CardContent className="p-6 space-y-6">
-
-            <h3 className="flex items-center gap-2 font-semibold text-slate-700">
-              <ShieldCheck className="w-5 h-5 text-blue-600" />
-              Documentação
-            </h3>
-
-            <div className="grid sm:grid-cols-2 gap-6">
-              <Info label="Carta" value={motorista.numeroCarta} />
-              <Info label="BI" value={motorista.numeroBI} />
-              <Info label="Categoria" value={motorista.categoriaCarta} />
-              <Info label="Validade" value={formatarData(motorista.dataValidadeCarta)} />
-            </div>
-
-          </CardContent>
         </Card>
 
-        {/* LADO DIREITO */}
-        <div className="space-y-6">
+        {/* LOCAIS */}
+        <Card className="p-4 space-y-4 border">
+          <h2 className="text-sm font-semibold text-muted-foreground uppercase">
+            Carta de Condução
+          </h2>
 
-          <Card className="p-6 border border-slate-200 bg-white">
-            <h3 className="text-sm font-bold text-slate-500 mb-4">
-              Informações
-            </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Item label="Número da Carta" value={motorista.numeroCarta} />
+            <Item label="Categoria da Carta" value={motorista.categoriaCarta} />
+            <Item label="Data Validade" value={motorista.dataValidadeCarta} />
+          </div>
+        </Card>
 
-            <div className="space-y-3 text-sm">
-              <Row label="Idade" value={`${calcularIdade(motorista.dataNascimento)} anos`} />
-              <Row label="Nascimento" value={formatarData(motorista.dataNascimento)} />
-              <Row label="Cadastro" value={formatarData(motorista.dataCadastro)} />
-            </div>
-          </Card>
+        {/* LOCAIS */}
+        <Card className="p-4 space-y-4 border">
+          <h2 className="text-sm font-semibold text-muted-foreground uppercase">
+            Status
+          </h2>
 
-          <Card className="p-6 border border-slate-200 bg-white">
-            <h3 className="flex items-center gap-2 text-sm font-bold text-slate-500 mb-3">
-              <MapPin className="w-4 h-4" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Badge>{ motorista.ativo}</Badge>
+          </div>
+        </Card>
+
+
+        {/* CUSTOS */}
+        <Card className="p-4 space-y-4 border">
+          <h2 className="text-sm font-semibold text-muted-foreground uppercase">
+            Localização
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Item label="Cidade" value={motorista.cidade} />
+            <Item label="Provincia" value={motorista.provincia} />
+          </div>
+        </Card>
+
+        {/* OBS */}
+        {motorista.endereco && (
+          <Card className="p-4 space-y-2 border">
+            <h2 className="text-sm font-semibold text-muted-foreground uppercase">
               Endereço
-            </h3>
-
-            <p className="text-slate-800">{motorista.endereco}</p>
-            <p className="text-sm text-slate-500">
-              {motorista.cidade}, {motorista.provincia}
-            </p>
+            </h2>
+            <p className="text-sm">{motorista.endereco}</p>
           </Card>
+        )}
 
-        </div>
-      </div>
+      </Card>
 
-      {/* DIALOG */}
+      {/* MODAL */}
       <AlertDialog open={mostrarConfirmacao} onOpenChange={setMostrarConfirmacao}>
-        <AlertDialogContent className="bg-white border-slate-200">
+        <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
+            <AlertDialogTitle>Deletar motorista</AlertDialogTitle>
             <AlertDialogDescription>
-              Deseja deletar {motorista.nome}?
+              Tem certeza que deseja deletar esta motorista?
             </AlertDialogDescription>
           </AlertDialogHeader>
 
-          <AlertDialogFooter>
+          <div className="flex justify-end gap-2">
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDeletar}
-              className="bg-red-600 hover:bg-red-700"
-            >
+            <AlertDialogAction>
               Deletar
             </AlertDialogAction>
-          </AlertDialogFooter>
+          </div>
         </AlertDialogContent>
       </AlertDialog>
 
@@ -237,21 +223,12 @@ export default function PaginaDetalhesMotorista() {
   );
 }
 
-/* COMPONENTES */
-function Info({ label, value }: any) {
+/* COMPONENTE AUXILIAR */
+function Item({ label, value }: any) {
   return (
     <div>
-      <p className="text-xs text-slate-500">{label}</p>
-      <p className="font-medium text-slate-800">{value}</p>
-    </div>
-  );
-}
-
-function Row({ label, value }: any) {
-  return (
-    <div className="flex justify-between">
-      <span className="text-slate-500">{label}</span>
-      <span className="font-medium text-slate-800">{value}</span>
+      <p className="text-xs text-muted-foreground">{label}</p>
+      <div className="font-medium text-sm mt-1">{value || '—'}</div>
     </div>
   );
 }

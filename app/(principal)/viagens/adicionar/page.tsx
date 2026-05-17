@@ -1,12 +1,13 @@
-'use client';
+"use client";
 
-import { Button } from '@/components/ui/button';
-import { useRouter } from 'next/navigation';
-import { ArrowLeft } from 'lucide-react';
-import { useDados } from '@/app/contexto/DadosContexto';
-import { useState } from 'react';
-import { Viagem } from '@/app/tipos/indices';
-import { FormularioViagem } from '@/app/componentes/FormularioViagem';
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
+import { useDados } from "@/app/contexto/DadosContexto";
+import { useState } from "react";
+import { Viagem } from "@/app/tipos/indices";
+import { FormularioViagem } from "@/app/componentes/FormularioViagem";
+import { Card } from "@/components/ui/card";
 
 export default function PaginaAdicionarViagem() {
   const router = useRouter();
@@ -19,9 +20,9 @@ export default function PaginaAdicionarViagem() {
 
       await adicionarViagem(viagem);
 
-      router.push('/viagens');
+      router.push("/viagens");
     } catch (error) {
-      console.error('Erro ao criar viagem:', error);
+      console.error("Erro ao criar viagem:", error);
     } finally {
       setCarregando(false);
     }
@@ -29,7 +30,6 @@ export default function PaginaAdicionarViagem() {
 
   return (
     <div className="space-y-6">
-
       <div className="flex items-center gap-4">
         <Button
           type="button"
@@ -41,29 +41,17 @@ export default function PaginaAdicionarViagem() {
         </Button>
 
         <div>
-          <h1 className="text-3xl font-bold text-foreground">
-            Nova Viagem
-          </h1>
-          <p className="text-muted-foreground mt-2">
-            Registre uma nova viagem
-          </p>
+          <h1 className="text-3xl font-bold text-foreground">Nova Viagem</h1>
+          <p className="text-muted-foreground mt-2">Registre uma nova viagem</p>
         </div>
       </div>
 
-      <FormularioViagem
-        onSubmit={handleSubmit}
-        carregando={carregando}
-      />
-
+      <Card className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <FormularioViagem onSubmit={handleSubmit} carregando={carregando} />
+      </Card>
     </div>
   );
 }
-
-
-
-
-
-
 
 // 'use client';
 

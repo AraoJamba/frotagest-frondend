@@ -20,13 +20,13 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 
 interface PropsFormularioDespesa {
-  lembrete?: Despesa;
+  despesa?: Despesa;
   onSubmit: (despesa: Despesa) => void;
   carregando?: boolean;
 }
 
 export function FormularioDespesa({
-  lembrete,
+  despesa,
   onSubmit,
   carregando = false,
 }: PropsFormularioDespesa) {
@@ -36,7 +36,7 @@ export function FormularioDespesa({
   const router = useRouter();
 
   const [dados, setDados] = useState<Despesa>(
-    lembrete || {
+    despesa || {
       id: Date.now().toString(),
       descricao: "",
       tipo: "manutencao",
@@ -257,7 +257,7 @@ export function FormularioDespesa({
           <Textarea
             value={dados.descricao}
             onChange={(e) => handleChange("descricao", e.target.value)}
-            className="min-h-[120px] rounded-xl border-slate-200 bg-slate-50 focus-visible:ring-blue-500/20"
+            className="min-h-30 rounded-xl border-slate-200 bg-slate-50 focus-visible:ring-blue-500/20"
             placeholder="Detalhes da despesa..."
           />
         </div>

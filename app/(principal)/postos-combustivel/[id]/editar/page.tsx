@@ -1,12 +1,13 @@
-'use client';
+"use client";
 
-import { Button } from '@/components/ui/button';
-import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft } from 'lucide-react';
-import { FormularioPostoCombustivel } from '@/app/componentes/FormularioPostoCombustivel';
-import { useEffect, useState } from 'react';
-import { useDados } from '@/app/contexto/DadosContexto';
-import { PostoCombustivel } from '@/app/tipos/indices';
+import { Button } from "@/components/ui/button";
+import { useParams, useRouter } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
+import { FormularioPostoCombustivel } from "@/app/componentes/FormularioPostoCombustivel";
+import { useEffect, useState } from "react";
+import { useDados } from "@/app/contexto/DadosContexto";
+import { PostoCombustivel } from "@/app/tipos/indices";
+import { Card } from "@/components/ui/card";
 
 export default function PaginaEditarPostoCombustivel() {
   const router = useRouter();
@@ -14,7 +15,8 @@ export default function PaginaEditarPostoCombustivel() {
 
   const { obterPostoCombustivel, atualizarPostoCombustivel } = useDados();
 
-  const [postoCombustivel, setPostoCombustivel] = useState<PostoCombustivel | null>(null);
+  const [postoCombustivel, setPostoCombustivel] =
+    useState<PostoCombustivel | null>(null);
   const [carregando, setCarregando] = useState(false);
 
   useEffect(() => {
@@ -43,9 +45,9 @@ export default function PaginaEditarPostoCombustivel() {
 
       await atualizarPostoCombustivel(postoCombustivel.id, dadosAtualizados);
 
-      router.push('/postos-combustivel');
+      router.push("/postos-combustivel");
     } catch (error) {
-      console.error('Erro ao atualizar posto:', error);
+      console.error("Erro ao atualizar posto:", error);
     } finally {
       setCarregando(false);
     }
@@ -53,7 +55,6 @@ export default function PaginaEditarPostoCombustivel() {
 
   return (
     <div className="space-y-6">
-
       {/* HEADER PADRÃO */}
       <div className="flex items-center gap-4">
         <Button
@@ -66,9 +67,7 @@ export default function PaginaEditarPostoCombustivel() {
         </Button>
 
         <div>
-          <h1 className="text-3xl font-bold text-foreground">
-            Editar Posto
-          </h1>
+          <h1 className="text-3xl font-bold text-foreground">Editar Posto</h1>
           <p className="text-muted-foreground mt-2">
             Atualize os dados do posto
           </p>
@@ -76,19 +75,16 @@ export default function PaginaEditarPostoCombustivel() {
       </div>
 
       {/* FORM */}
-      <FormularioPostoCombustivel
-        postoCombustivel={postoCombustivel}
-        onSubmit={handleSubmit}
-        carregando={carregando}
-      />
-
+      <Card className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <FormularioPostoCombustivel
+          postoCombustivel={postoCombustivel}
+          onSubmit={handleSubmit}
+          carregando={carregando}
+        />
+      </Card>
     </div>
   );
 }
-
-
-
-
 
 // 'use client';
 

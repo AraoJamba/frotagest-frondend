@@ -1,13 +1,14 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter, useParams } from 'next/navigation';
-import { FormularioVeiculo } from '@/app/componentes/FormularioVeiculo';
-import { Veiculo } from '@/app/tipos/indices';
-import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { useRouter, useParams } from "next/navigation";
+import { FormularioVeiculo } from "@/app/componentes/FormularioVeiculo";
+import { Veiculo } from "@/app/tipos/indices";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
 
-import { obterVeiculo, atualizarVeiculo } from '@/lib/veiculos';
+import { obterVeiculo, atualizarVeiculo } from "@/lib/veiculos";
+import { Card } from "@/components/ui/card";
 
 export default function PaginaEditarVeiculo() {
   const router = useRouter();
@@ -36,7 +37,6 @@ export default function PaginaEditarVeiculo() {
           ultimaRevista: data.ultimaRevista,
           dataCadastro: data.dataCadastro,
         });
-
       } catch (err) {
         console.error("Erro ao buscar veículo:", err);
         setVeiculo(null);
@@ -52,8 +52,7 @@ export default function PaginaEditarVeiculo() {
 
       await atualizarVeiculo(veiculo!.id, dadosAtualizados);
 
-      router.push('/veiculos');
-
+      router.push("/veiculos");
     } catch (err) {
       console.error("Erro ao atualizar veículo:", err);
     } finally {
@@ -64,16 +63,13 @@ export default function PaginaEditarVeiculo() {
   if (!veiculo) {
     return (
       <div className="text-center py-10">
-        <p className="text-muted-foreground">
-          Carregando veículo...
-        </p>
+        <p className="text-muted-foreground">Carregando veículo...</p>
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-
       {/* HEADER PADRÃO */}
       <div className="flex items-center gap-4">
         <Button
@@ -86,9 +82,7 @@ export default function PaginaEditarVeiculo() {
         </Button>
 
         <div>
-          <h1 className="text-3xl font-bold text-foreground">
-            Editar Veículo
-          </h1>
+          <h1 className="text-3xl font-bold text-foreground">Editar Veículo</h1>
           <p className="text-muted-foreground mt-2">
             Atualize os dados do veículo
           </p>
@@ -96,17 +90,16 @@ export default function PaginaEditarVeiculo() {
       </div>
 
       {/* FORM */}
-      <FormularioVeiculo
-        veiculo={veiculo}
-        onSubmit={handleSubmit}
-        carregando={carregando}
-      />
-
+      <Card className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <FormularioVeiculo
+          veiculo={veiculo}
+          onSubmit={handleSubmit}
+          carregando={carregando}
+        />
+      </Card>
     </div>
   );
 }
-
-
 
 // 'use client';
 
@@ -209,11 +202,6 @@ export default function PaginaEditarVeiculo() {
 //     </div>
 //   );
 // }
-
-
-
-
-
 
 // 'use client';
 

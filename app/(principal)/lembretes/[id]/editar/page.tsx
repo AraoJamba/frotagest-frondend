@@ -65,12 +65,9 @@ export default function PaginaEditarLembrete() {
       </div>
 
       {/* FORMULÁRIO */}
-      <FormularioLembrete
-        lembrete={lembrete}
-        onSubmit={handleSubmit}
-        carregando={carregando}
-      />
-
+      <Card className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <FormularioLembrete lembrete={lembrete} onSubmit={handleSubmit} carregando={carregando} />
+      </Card>
     </div>
   );
 }

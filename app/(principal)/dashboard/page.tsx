@@ -1,127 +1,272 @@
-'use client';
-
-import React from "react";
-import { useAutenticacao } from '@/app/contexto/AutenticacaoContexto';
-import { Card } from '@/components/ui/card';
-import { Truck, Users, MapPin, Wrench, ArrowUpRight } from 'lucide-react';
+"use client";
 
 import { useEffect, useState } from "react";
 import { getDashboard } from "@/lib/dashboard";
 
-export default function PaginaDashboard() {
-  const { usuarioAtual } = useAutenticacao();
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
+import {
+  Wrench,
+  CarFront,
+  MapPin,
+  UserCheck,
+  TrendingUp,
+} from "lucide-react";
 
+export default function Dashboard() {
+  const [data, setData] = useState<any>(null);
 
-    const [data, setData] = useState<any>(null);
-  
-    useEffect(() => {
-      getDashboard().then(setData);
-    }, []);
-  
-    if (!data) return <p>Carregando...</p>;
+  useEffect(() => {
+    getDashboard().then(setData);
+  }, []);
 
-  const cartasEstatisticas = [
-    { titulo: 'Veículos Ativos', valor: data.veiculos.ativos, desc: 'Frota em operação', icone: Truck, cor: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/20' },
-    { titulo: 'Motoristas', valor: data.motoristas.ativos, desc: 'Equipe ativa', icone: Users, cor: 'text-purple-400', bg: 'bg-purple-500/10', border: 'border-purple-500/20' },
-    { titulo: 'Viagens Ativas', valor: data.viagens.emAndamento, desc: 'Em progresso', icone: MapPin, cor: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20' },
-    { titulo: 'Manutenção', valor: data.manutencoes.status.emAndamento, desc: 'Serviços pendentes', icone: Wrench, cor: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/20' },
+  if (!data) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-slate-50">
+        <div className="flex flex-col items-center gap-4">
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-slate-200 border-t-blue-600" />
+          <p className="text-sm font-medium text-slate-500">
+            Carregando sistema...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  const stats = [
+    {
+      title: "Manutenções",
+      icon: <Wrench className="w-5 h-5 text-blue-600" />,
+      total: 1,
+      status: [
+        { label: "Agendadas", value: 1 },
+        { label: "Concluídas", value: 0 },
+        { label: "Em andamento", value: 0 },
+      ],
+    },
+    {
+      title: "Veículos",
+      icon: <CarFront className="w-5 h-5 text-emerald-600" />,
+      total: 1,
+      status: [
+        { label: "Ativos", value: 1 },
+        { label: "Manutenção", value: 0 },
+      ],
+    },
+    {
+      title: "Viagens",
+      icon: <MapPin className="w-5 h-5 text-violet-600" />,
+      total: 1,
+      status: [
+        { label: "Em curso", value: 1 },
+        { label: "Finalizadas", value: 0 },
+      ],
+    },
+    {
+      title: "Motoristas",
+      icon: <UserCheck className="w-5 h-5 text-orange-500" />,
+      total: 1,
+      status: [
+        { label: "Disponíveis", value: 1 },
+        { label: "Em viagem", value: 0 },
+      ],
+    },
   ];
 
   return (
-    <div className="min-h-screen bg-[#09090b] text-zinc-100 p-6 md:p-10 transition-colors duration-500">
-      {/* Cabeçalho */}
-      <header className="mb-10 flex justify-between items-end">
-        <div>
-          <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-white to-zinc-500 bg-clip-text text-transparent">
-            Painel de Controle
-          </h1>
-          <p className="text-zinc-450 mt-2 font-medium">
-            Bem-vindo de volta, <span className="text-white">{usuarioAtual?.nome}</span>.
-          </p>
-        </div>
-        <div className="hidden md:block text-xs font-mono text-zinc-500 bg-zinc-900 px-3 py-1 rounded-full border border-zinc-800">
-          SISTEMA V2.0.4
-        </div>
-      </header>
+    <main className="min-h-screen bg-slate-100 p-6 lg:p-10">
+      <div className="max-w-7xl mx-auto">
 
-      {/* Grid de Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
-        {cartasEstatisticas.map((carta) => {
-          const Icone = carta.icone;
-          return (
-            <Card key={carta.titulo} className="relative group overflow-hidden border-zinc-800 bg-zinc-900/50 p-6 transition-all hover:bg-zinc-900 hover:border-zinc-700">
-              <div className="flex justify-between items-start">
+        {/* HEADER */}
+        <header className="mb-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+
+          <div>
+            <span className="text-sm font-semibold text-blue-600 uppercase tracking-wide">
+              Sistema de Gestão de Frotas
+            </span>
+
+            <h1 className="text-3xl lg:text-4xl font-bold text-slate-800 mt-2">
+              Dashboard
+            </h1>
+
+            <p className="text-slate-500 mt-2 text-sm">
+              Controle e monitoramento da frota em tempo real.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2 bg-white border border-slate-200 px-4 py-2 rounded-xl shadow-sm">
+            <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+
+            <span className="text-sm text-slate-600 font-medium">
+              Servidor Online
+            </span>
+          </div>
+        </header>
+
+        {/* CARDS */}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+
+          {stats.map((item, idx) => (
+            <Card
+              key={idx}
+              className="border border-slate-200 bg-white shadow-sm hover:shadow-md transition-all duration-300 rounded-2xl"
+            >
+              <CardHeader className="flex flex-row items-center justify-between pb-4">
+
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-widest text-zinc-500">{carta.titulo}</p>
-                  <h3 className="text-3xl font-black mt-1">{carta.valor}</h3>
+                  <CardTitle className="text-sm font-semibold text-slate-600">
+                    {item.title}
+                  </CardTitle>
                 </div>
-                <div className={`p-2.5 rounded-xl border ${carta.bg} ${carta.cor} ${carta.border}`}>
-                  <Icone className="w-5 h-5" />
+
+                <div className="p-3 rounded-xl bg-slate-100">
+                  {item.icon}
                 </div>
-              </div>
-              <div className="mt-4 flex items-center justify-between">
-                <span className="text-xs text-zinc-500">{carta.desc}</span>
-                <ArrowUpRight className="w-3 h-3 text-zinc-700 group-hover:text-primary transition-colors" />
-              </div>
-              {/* Efeito de luz no hover */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+              </CardHeader>
+
+              <CardContent>
+
+                <div className="flex items-center gap-2 mb-6">
+                  <span className="text-4xl font-bold text-slate-800">
+                    {item.total}
+                  </span>
+
+                  <TrendingUp className="w-4 h-4 text-emerald-500" />
+                </div>
+
+                <div className="space-y-4">
+
+                  {item.status.map((st, i) => (
+                    <div
+                      key={i}
+                      className="flex items-center justify-between"
+                    >
+                      <div className="flex items-center gap-2">
+
+                        <div
+                          className={`h-2 w-2 rounded-full ${
+                            st.value > 0
+                              ? "bg-emerald-500"
+                              : "bg-slate-300"
+                          }`}
+                        />
+
+                        <span className="text-sm text-slate-600">
+                          {st.label}
+                        </span>
+                      </div>
+
+                      <span className="text-sm font-semibold text-slate-700">
+                        {st.value}
+                      </span>
+                    </div>
+                  ))}
+
+                </div>
+              </CardContent>
             </Card>
-          );
-        })}
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Atividades Recentes */}
-        <Card className="lg:col-span-2 bg-zinc-900/30 border-zinc-800 p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-lg font-bold tracking-tight">Fluxo de Atividades</h2>
-            <div className="h-1 w-12 bg-zinc-800 rounded-full" />
-          </div>
-          
-          <div className="space-y-3">
-            {[
-              { label: 'Viagem', info: 'Scania 124 - João Silva', time: '2h', status: 'bg-blue-500' },
-              { label: 'Cadastro', info: 'Carlos Eduardo (Motorista)', time: '5h', status: 'bg-purple-500' },
-              { label: 'Alerta', info: 'Volvo FH16 - Revisão', time: '1d', status: 'bg-amber-500' },
-            ].map((item, idx) => (
-              <div key={idx} className="flex items-center gap-4 p-3 rounded-lg hover:bg-white/[0.02] border border-transparent hover:border-zinc-800 transition-all">
-                <div className={`w-1.5 h-6 rounded-full ${item.status}`} />
-                <div className="flex-1">
-                  <p className="text-sm font-semibold">{item.label}</p>
-                  <p className="text-xs text-zinc-500 uppercase tracking-tighter">{item.info}</p>
-                </div>
-                <span className="text-[10px] font-mono text-zinc-600">{item.time} atrás</span>
-              </div>
-            ))}
-          </div>
-        </Card>
-
-        {/* Card Informativo Estilizado */}
-        <div className="space-y-6">
-          <div className="p-6 rounded-xl bg-primary/10 border border-primary/20 relative group cursor-help">
-            <div className="relative z-10">
-              <div className="flex items-center gap-2 text-primary mb-3">
-                <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                <span className="text-xs font-black uppercase italic">Dica de Produtividade</span>
-              </div>
-              <p className="text-sm text-zinc-300 leading-relaxed leading-relaxed">
-                Você pode filtrar sua frota por <span className="text-white font-bold">status de manutenção</span> no menu lateral para otimizar os custos.
-              </p>
-            </div>
-          </div>
-
-          <div className="p-6 rounded-xl border border-dashed border-zinc-800 flex flex-col items-center justify-center text-zinc-600 hover:text-zinc-400 hover:border-zinc-600 transition-all cursor-pointer">
-             <div className="w-10 h-10 rounded-full border border-current flex items-center justify-center mb-2">
-                <span className="text-xl">+</span>
-             </div>
-             <span className="text-xs font-bold uppercase tracking-widest">Novo Relatório</span>
-          </div>
+          ))}
         </div>
       </div>
-    </div>
+    </main>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+// "use client";
+
+// import { useEffect, useState } from "react";
+// import { getDashboard } from "@/lib/dashboard";
+// import { Card } from "@/components/ui/card";
+
+// export default function Dashboard() {
+//   const [data, setData] = useState<any>(null);
+
+//   useEffect(() => {
+//     getDashboard().then(setData);
+//   }, []);
+
+//   if (!data) return <p>Carregando...</p>;
+
+//   return (
+//     <>
+
+//       <Card>
+//         <h1>Manutencoes</h1>
+//         <p>  total: 1 </p>
+//         <ul>status
+//           <li>agendadas: 1</li>
+//           <li>concluidas: 0</li>
+//           <li>cancelada: 0</li>
+//           <li>emAndamento: 0</li>
+//         </ul>
+
+//         <ul>tipos
+//           <li>corretiva: 1</li>
+//           <li>inspecao: 0</li>
+//           <li>preventiva: 0</li>
+//           <li>reparo: 0</li>
+//         </ul>
+//       </Card>
+
+//       <Card>
+//         <h1>Veículos</h1>
+//         <p>  total: 1 </p>
+//         <ul>status
+//           <li>agendadas: 1</li>
+//           <li>concluidas: 0</li>
+//           <li>cancelada: 0</li>
+//           <li>emAndamento: 0</li>
+//         </ul>
+
+//         <ul>tipos
+//           <li>carros: 1</li>
+//           <li>caminhoes: 0</li>
+//           <li>caminhonente: 0</li>
+//           <li>motorizadas: 0</li>
+//           <li>autocarros: 0</li>
+//           <li>mini autocarros: 0</li>
+//         </ul>
+//       </Card>
+
+//       <Card>
+//         <h1>Viagens</h1>
+//         <p>  total: 1 </p>
+//         <ul>status
+//           <li>agendadas: 1</li>
+//           <li>concluidas: 0</li>
+//           <li>cancelada: 0</li>
+//           <li>emAndamento: 0</li>
+//         </ul>
+//       </Card>
+
+//       <Card>
+//         <h1>Motoristas</h1>
+//         <p>  total: 1 </p>
+//         <ul>status
+//           <li>ativos: 1</li>
+//           <li>inaativos: 0</li>
+//         </ul>
+//       </Card>
+//     </>
+//   );
+// }
 
 
 

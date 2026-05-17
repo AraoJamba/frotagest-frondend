@@ -1,13 +1,14 @@
-'use client';
+"use client";
 
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
-import { useDados } from '@/app/contexto/DadosContexto';
-import { useState } from 'react';
-import { PostoCombustivel } from '@/app/tipos/indices';
-import { FormularioPostoCombustivel } from '@/app/componentes/FormularioPostoCombustivel';
-import { useRouter } from 'next/navigation';
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
+import { useDados } from "@/app/contexto/DadosContexto";
+import { useState } from "react";
+import { PostoCombustivel } from "@/app/tipos/indices";
+import { FormularioPostoCombustivel } from "@/app/componentes/FormularioPostoCombustivel";
+import { useRouter } from "next/navigation";
+import { Card } from "@/components/ui/card";
 
 export default function PaginaAdicionarPostoCombustivel() {
   const router = useRouter();
@@ -20,9 +21,9 @@ export default function PaginaAdicionarPostoCombustivel() {
 
       await adicionarPostoCombustivel(postoCombustivel);
 
-      router.push('/postos-combustivel');
+      router.push("/postos-combustivel");
     } catch (error) {
-      console.error('Erro ao criar posto:', error);
+      console.error("Erro ao criar posto:", error);
     } finally {
       setCarregando(false);
     }
@@ -30,7 +31,6 @@ export default function PaginaAdicionarPostoCombustivel() {
 
   return (
     <div className="space-y-6">
-
       {/* HEADER PADRÃO */}
       <div className="flex items-center gap-4">
         <Link href="/postos-combustivel">
@@ -40,9 +40,7 @@ export default function PaginaAdicionarPostoCombustivel() {
         </Link>
 
         <div>
-          <h1 className="text-3xl font-bold text-foreground">
-            Novo Posto
-          </h1>
+          <h1 className="text-3xl font-bold text-foreground">Novo Posto</h1>
           <p className="text-muted-foreground mt-2">
             Cadastre um novo posto de combustível
           </p>
@@ -50,24 +48,17 @@ export default function PaginaAdicionarPostoCombustivel() {
       </div>
 
       {/* FORM */}
-      <FormularioPostoCombustivel
-        onSubmit={handleSubmit}
-        carregando={carregando}
-      />
-
+      <Card className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <FormularioPostoCombustivel
+          onSubmit={handleSubmit}
+          carregando={carregando}
+        />
+      </Card>
     </div>
   );
 }
 
-
-
-
-
-
-
-
 // 'use client';
-
 
 // import { Button } from '@/components/ui/button';
 // import Link from 'next/link';

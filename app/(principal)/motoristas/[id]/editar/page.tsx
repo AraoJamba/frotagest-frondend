@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter, useParams } from 'next/navigation';
+import { useState, useEffect } from "react";
+import { useRouter, useParams } from "next/navigation";
 
-import { FormularioMotorista } from '@/app/componentes/FormularioMotorista';
-import { Motorista } from '@/app/tipos/indices';
+import { FormularioMotorista } from "@/app/componentes/FormularioMotorista";
+import { Motorista } from "@/app/tipos/indices";
 
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft } from "lucide-react";
 
-import { obterMotorista, atualizarMotorista } from '@/lib/motoristas';
+import { obterMotorista, atualizarMotorista } from "@/lib/motoristas";
 
 export default function PaginaEditarMotorista() {
   const router = useRouter();
@@ -20,7 +20,7 @@ export default function PaginaEditarMotorista() {
   const [motorista, setMotorista] = useState<Motorista | null>(null);
   const [carregando, setCarregando] = useState(false);
 
-  // 🔥 FETCH
+  //  FETCH
   useEffect(() => {
     const fetch = async () => {
       try {
@@ -45,7 +45,6 @@ export default function PaginaEditarMotorista() {
           cidade: data.cidade,
           provincia: data.provincia,
         });
-
       } catch (err) {
         console.error(err);
         setMotorista(null);
@@ -55,7 +54,7 @@ export default function PaginaEditarMotorista() {
     if (params?.id) fetch();
   }, [params.id]);
 
-  // 🔥 SUBMIT
+  // SUBIMIT
   const handleSubmit = async (dadosAtualizados: Motorista) => {
     try {
       setCarregando(true);
@@ -79,8 +78,7 @@ export default function PaginaEditarMotorista() {
         provincia: dadosAtualizados.provincia,
       });
 
-      router.push('/motoristas');
-
+      router.push("/motoristas");
     } catch (err) {
       console.error("Erro ao atualizar:", err);
     } finally {
@@ -99,10 +97,8 @@ export default function PaginaEditarMotorista() {
 
   return (
     <div className="space-y-8">
-
       {/* HEADER */}
       <div className="flex items-center justify-between">
-
         <div className="flex items-center gap-4">
           <Button
             variant="ghost"
@@ -122,29 +118,19 @@ export default function PaginaEditarMotorista() {
             </p>
           </div>
         </div>
-
       </div>
 
       {/* FORM CARD */}
       <Card className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-
         <FormularioMotorista
           motorista={motorista}
           onSubmit={handleSubmit}
           carregando={carregando}
         />
-
       </Card>
-
     </div>
   );
 }
-
-
-
-
-
-
 
 // 'use client';
 
@@ -254,10 +240,6 @@ export default function PaginaEditarMotorista() {
 //     </div>
 //   );
 // }
-
-
-
-
 
 // // 'use client';
 

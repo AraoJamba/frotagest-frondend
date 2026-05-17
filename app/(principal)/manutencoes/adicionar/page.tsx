@@ -1,13 +1,14 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useDados } from '@/app/contexto/DadosContexto';
-import { ManutencaoVeiculo } from '@/app/tipos/indices';
-import { FormularioManutencao } from '@/app/componentes/FormularioManutencoes';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useDados } from "@/app/contexto/DadosContexto";
+import { ManutencaoVeiculo } from "@/app/tipos/indices";
+import { FormularioManutencao } from "@/app/componentes/FormularioManutencoes";
 
-import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
+import { Card } from "@/components/ui/card";
 
 export default function PaginaAdicionarManutencao() {
   const router = useRouter();
@@ -20,9 +21,9 @@ export default function PaginaAdicionarManutencao() {
 
       await adicionarManutencao(manutencao);
 
-      router.push('/manutencoes');
+      router.push("/manutencoes");
     } catch (error) {
-      console.error('Erro ao criar manutenção:', error);
+      console.error("Erro ao criar manutenção:", error);
     } finally {
       setCarregando(false);
     }
@@ -30,7 +31,6 @@ export default function PaginaAdicionarManutencao() {
 
   return (
     <div className="space-y-6">
-
       {/* HEADER PADRÃO */}
       <div className="flex items-center gap-4">
         <Button
@@ -53,17 +53,12 @@ export default function PaginaAdicionarManutencao() {
       </div>
 
       {/* FORM */}
-      <FormularioManutencao
-        onSubmit={handleSubmit}
-        carregando={carregando}
-      />
-
+      <Card className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <FormularioManutencao onSubmit={handleSubmit} carregando={carregando} />
+      </Card>
     </div>
   );
 }
-
-
-
 
 // 'use client';
 

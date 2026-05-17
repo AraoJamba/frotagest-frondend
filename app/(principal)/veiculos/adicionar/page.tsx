@@ -1,14 +1,15 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { FormularioVeiculo } from '@/app/componentes/FormularioVeiculo';
-import { Veiculo } from '@/app/tipos/indices';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { FormularioVeiculo } from "@/app/componentes/FormularioVeiculo";
+import { Veiculo } from "@/app/tipos/indices";
 
-import { criarVeiculo } from '@/lib/veiculos';
+import { criarVeiculo } from "@/lib/veiculos";
 
-import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
+import { Card } from "@/components/ui/card";
 
 export default function PaginaAdicionarVeiculo() {
   const router = useRouter();
@@ -33,8 +34,7 @@ export default function PaginaAdicionarVeiculo() {
         ativo: veiculo.ativo,
       });
 
-      router.push('/veiculos');
-
+      router.push("/veiculos");
     } catch (err) {
       console.error("Erro ao criar veículo:", err);
     } finally {
@@ -44,7 +44,6 @@ export default function PaginaAdicionarVeiculo() {
 
   return (
     <div className="space-y-6">
-
       {/* HEADER PADRÃO */}
       <div className="flex items-center gap-4">
         <Button
@@ -57,9 +56,7 @@ export default function PaginaAdicionarVeiculo() {
         </Button>
 
         <div>
-          <h1 className="text-3xl font-bold text-foreground">
-            Novo Veículo
-          </h1>
+          <h1 className="text-3xl font-bold text-foreground">Novo Veículo</h1>
           <p className="text-muted-foreground mt-2">
             Preencha os dados do veículo
           </p>
@@ -67,17 +64,12 @@ export default function PaginaAdicionarVeiculo() {
       </div>
 
       {/* FORM */}
-      <FormularioVeiculo
-        onSubmit={handleSubmit}
-        carregando={carregando}
-      />
-
+      <Card className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <FormularioVeiculo onSubmit={handleSubmit} carregando={carregando} />
+      </Card>
     </div>
   );
 }
-
-
-
 
 // 'use client';
 
@@ -136,12 +128,6 @@ export default function PaginaAdicionarVeiculo() {
 //     </div>
 //   );
 // }
-
-
-
-
-
-
 
 // 'use client';
 

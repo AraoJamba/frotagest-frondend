@@ -19,6 +19,7 @@ interface AutenticacaoContextoType {
   carregando: boolean;
   realizarLogin: (email: string, senha: string) => Promise<void>;
   realizarLogout: () => Promise<void>;
+  realizarCadastro: (nome: string, email: string, senha: string, papel: PapelUsuario) => Promise<void>;
 }
 
 // 1. Definição do Contexto
@@ -44,22 +45,49 @@ export function Provedor_Autenticacao({ children }: { children: ReactNode }) {
 
 const realizarLogin = async (email: string, senha: string) => {
   try {
-    // 1. Envia como JSON conforme o seu backend espera (LoginSchema)
+    //Envia como JSON conforme o seu backend espera (LoginSchema)
     await api.post("/auth/login", {
-      email: email, 
-      senha: senha, 
+      email: email,
+      senha: senha,
     });
 
-    // 2. O cookie já foi salvo automaticamente pelo navegador se o CORS estiver OK
+    // O cookie já foi salvo automaticamente pelo navegador se o CORS estiver OK
     // Agora busca os dados do usuário
     const res = await api.get('/auth/eu');
     setUsuarioAtual(res.data);
-    
+
   } catch (error: any) {
     //console.error("Erro no login:", error.response?.data || error.message);
     throw new Error(error.response?.data?.detail || "Erro ao fazer login");
   }
 };
+
+const realizarCadastro = async (
+  nome: string,
+  email: string,
+  senha: string,
+  papel: PapelUsuario
+) => {
+  try {
+    // Cria o usuário
+    await api.post("/usuarios", {
+      nome,
+      email,
+      papel,
+      senha,
+    });
+
+    // Faz login automaticamente
+    await realizarLogin(email, senha);
+
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.detail || "Erro ao fazer o cadastro"
+    );
+  }
+};
+
+
 
   const realizarLogout = async () => {
     localStorage.removeItem('token');
@@ -68,7 +96,7 @@ const realizarLogin = async (email: string, senha: string) => {
 
   return (
     <AutenticacaoContexto.Provider
-      value={{ usuarioAtual, estaAutenticado: !!usuarioAtual, carregando, realizarLogin, realizarLogout }}
+      value={{ usuarioAtual, estaAutenticado: !!usuarioAtual, carregando, realizarLogin, realizarLogout, realizarCadastro }}
     >
       {children}
     </AutenticacaoContexto.Provider>
@@ -146,7 +174,7 @@ export function useAutenticacao() {
 //   // 🔐 LOGIN
 //   const realizarLogin = async (email: string, senha: string) => {
 //     await api.post(
-//       '/auth/login', 
+//       '/auth/login',
 //       { email, senha }
 //     );
 
@@ -254,7 +282,7 @@ const realizarLogin = async (email: string, senha: string) => {
   const realizarCadastro = async (nome: string, email: string, senha: string, papel: PapelUsuario) => {
     // Simular chamada de API
     await new Promise(resolve => setTimeout(resolve, 500));
-    
+
     const novoUsuario: UsuarioAutenticado = {
       id: Date.now().toString(),
       nome,
@@ -292,5 +320,5 @@ export function useAutenticacao() {
     throw new Error('useAutenticacao deve ser usado dentro de Provedor_Autenticacao');
   }
   return contexto;
-} 
+}
   */

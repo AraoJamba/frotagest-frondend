@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 
-import { Viagem } from '@/app/tipos/api';
+import { ViagemAPI } from '@/app/tipos/api';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -28,7 +28,7 @@ export default function PaginaDetalhesViagem() {
   const router = useRouter();
   const params = useParams();
 
-  const [viagem, setViagem] = useState<Viagem | null>(null);
+  const [viagem, setViagem] = useState<ViagemAPI | null>(null);
   const [mostrarConfirmacao, setMostrarConfirmacao] = useState(false);
 
   useEffect(() => {
@@ -124,7 +124,7 @@ export default function PaginaDetalhesViagem() {
             <Item label="Início" value={formatarData(viagem.data_inicio)} />
             <Item
               label="Fim"
-              value={viagem.dataFim ? formatarData(viagem.data_fim) : '—'}
+              value={viagem.data_fim ? formatarData(viagem.data_fim) : '—'}
             />
           </div>
         </Card>
