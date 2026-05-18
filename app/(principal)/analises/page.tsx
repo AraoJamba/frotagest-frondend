@@ -22,7 +22,7 @@ import { TrendingUp, Fuel, Gauge, Navigation } from "lucide-react";
 
 const CORES = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#6366f1"];
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+import { api } from "./api";
 
 export default function PaginaAnalises() {
   const [dadosCustos, setDadosCustos] = useState<any[]>([]);
@@ -35,6 +35,8 @@ export default function PaginaAnalises() {
         const resDespesas = await fetch(
           `{${API_URL}/despesas/analises/resumo}`,
         );
+
+
         const despesas = await resDespesas.json();
 
         const resViagens = await fetch(`{${API_URL}/viagens/analises/resumo}`);

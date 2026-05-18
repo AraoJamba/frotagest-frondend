@@ -48,10 +48,6 @@ export const deletarMotorista = async (id: string) => {
   return res.data;
 };
 
-// export const criarMotorista = async (data: any) => {
-//   const res = await api.post("/motoristas", data);
-//   return res.data;
-// };
 
 export const criarMotorista = async (data: any) => {
   const payload = {
@@ -62,7 +58,6 @@ export const criarMotorista = async (data: any) => {
     numero_bi: data.numeroBI,
     categoria_carta: data.categoriaCarta,
 
-    // 🔥 GARANTE FORMATO CORRETO DE DATA
     data_nascimento: data.dataNascimento
       ? new Date(data.dataNascimento).toISOString().split("T")[0]
       : "2000-01-01",
@@ -79,7 +74,7 @@ export const criarMotorista = async (data: any) => {
     provincia: data.provincia ?? "",
   };
 
-  console.log("PAYLOAD FINAL:", payload); // 🔥 DEBUG IMPORTANTE
+  console.log("PAYLOAD FINAL:", payload); 
 
   const res = await api.post("/motoristas", payload);
   return res.data;

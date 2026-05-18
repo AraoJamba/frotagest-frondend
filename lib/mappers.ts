@@ -30,7 +30,7 @@ export const mapVeiculo = (data: any) => {
     modelo: data.modelo,
     ano: data.ano,
 
-    VIN: data.vin, // 🔥 importante
+    VIN: data.vin, 
 
     tipo: data.tipo,
     combustivel: data.combustivel,

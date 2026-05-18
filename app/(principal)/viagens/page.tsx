@@ -24,9 +24,9 @@ export default function PaginaViagens() {
   const [busca, setBusca] = useState('');
 
 const viagensFiltrados = (viagens || []).filter(v =>
-  v.localPartida?.toLowerCase().includes(busca.toLowerCase()) ||
-  v.localDestino?.toLowerCase().includes(busca.toLowerCase()) ||
-  v.dataInicio?.toLowerCase().includes(busca.toLowerCase())
+  v.local_partida?.toLowerCase().includes(busca.toLowerCase()) ||
+  v.local_destino?.toLowerCase().includes(busca.toLowerCase()) ||
+  v.data_inicio?.toLowerCase().includes(busca.toLowerCase())
 );
 
 
@@ -55,7 +55,7 @@ const viagensFiltrados = (viagens || []).filter(v =>
   const obterStatusTexto = (status: string) => {
     const statusMap: Record<string, string> = {
       concluida: 'Concluída',
-      emAndamento: 'Em Andamento',
+      emAndamento: 'EmAndamento',
       planejada: 'Planejada',
       cancelada: 'Cancelada',
     };
@@ -113,10 +113,10 @@ const viagensFiltrados = (viagens || []).filter(v =>
               <tbody className="divide-y divide-border">
                 {viagensFiltrados.map((viagem) => (
                   <tr key={viagem.id} className="hover:bg-muted/50 transition-colors">
-                    <td className="px-6 py-4 text-sm text-foreground font-medium">{viagem.localPartida}</td>
-                    <td className="px-6 py-4 text-sm text-muted-foreground">{viagem.localDestino}</td>
+                    <td className="px-6 py-4 text-sm text-foreground font-medium">{viagem.local_partida}</td>
+                    <td className="px-6 py-4 text-sm text-muted-foreground">{viagem.local_destino}</td>
                     <td className="px-6 py-4 text-sm text-foreground">{viagem.distancia} km</td>
-                    <td className="px-6 py-4 text-sm text-muted-foreground">{formatarData(viagem.dataInicio)}</td>
+                    <td className="px-6 py-4 text-sm text-muted-foreground">{formatarData(viagem.data_inicio)}</td>
                     <td className="px-6 py-4 text-sm">
                       <Badge variant={obterStatusColor(viagem.status)}>
                         {obterStatusTexto(viagem.status)}

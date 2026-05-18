@@ -10,7 +10,7 @@ import {
   Despesa,
   PostoCombustivel,
   Lembrete,
-} from '@/app/tipos/indices';
+} from '@/app/tipos/api';
 
 
 
@@ -21,6 +21,16 @@ import { mapearServicoParaFrontend, ServicoBackend } from '@/lib/mappers';
 
 
 interface DadosContextoType {
+
+  // Viagens filtradas
+carregarViagensPorVeiculo: (veiculoId: string) => Promise<Viagem[]>;
+carregarViagensPorMotorista: (motoristaId: string) => Promise<Viagem[]>;
+
+// Manutenções filtradas
+carregarManutencoesPorVeiculo: (veiculoId: string) => Promise<ManutencaoVeiculo[]>;
+
+// Despesas filtradas
+carregarDespesasPorVeiculo: (veiculoId: string) => Promise<Despesa[]>;
 
   // Motoristas
   carregarMotoristas: () => Promise<void>;
@@ -165,22 +175,7 @@ export function Provedor_Dados({ children }: { children: ReactNode }) {
   const obterVeiculo = (id: string) => veiculos.find(v => v.id === id);
 
 
-  // Serviços
-  // const adicionarServico = (servico: Servico) => {
-  //   setServicos([...servicos, servico]);
-  // };
-
-  // const atualizarServico = (id: string, atualizacoes: Partial<Servico>) => {
-  //   setServicos(servicos.map(s => s.id === id ? { ...s, ...atualizacoes } : s));
-  // };
-
-  // const deletarServico = (id: string) => {
-  //   setServicos(servicos.filter(s => s.id !== id));
-  // };
-
-  // const obterServico = (id: string) => {
-  //   return servicos.find(s => s.id === id);
-  // };
+//Servico
 
   const adicionarServico = async (servico: Servico) => {
     const res = await api.post('/servicos', servico);
@@ -202,18 +197,26 @@ export function Provedor_Dados({ children }: { children: ReactNode }) {
   const carregarServicos = async () => {
     const res = await api.get('/servicos');
     setServicos(res.data);
-    {console.log(res.data)}
+    //{console.log(res.data)}
   };
 
-  // Exemplo adaptado da lógica de 'verificarUsuario' nas fontes [1]
 
 
 
   // Viagens
-  const adicionarViagem = async (viagem: Viagem) => {
+  // const adicionarViagem = async (viagem: Viagem) => {
+  //   const res = await api.post('/viagens', viagem);
+  //   setViagens(prev => [...prev, res.data]);
+  // };
+
+const adicionarViagem = async (viagem: Viagem) => {
+  try {
     const res = await api.post('/viagens', viagem);
     setViagens(prev => [...prev, res.data]);
-  };
+  } catch (err: any) {
+    console.log('id_ ', err.response?.data);
+  }
+};
 
   const atualizarViagem = async (id: string, dados: Partial<Viagem>) => {
     const res = await api.put(`/viagens/${id}`, dados);
@@ -233,27 +236,9 @@ export function Provedor_Dados({ children }: { children: ReactNode }) {
   };
 
 
+  //Manutencoes
 
-
-
-
-
-
-
-  // Manutenção
-  // const adicionarManutencao = (manutencao: ManutencaoVeiculo) => {
-  //   setManutencoes([...manutencoes, manutencao]);
-  // };
-
-  // const atualizarManutencao = (id: string, atualizacoes: Partial<ManutencaoVeiculo>) => {
-  //   setManutencoes(manutencoes.map(m => m.id === id ? { ...m, ...atualizacoes } : m));
-  // };
-
-  // const deletarManutencao = (id: string) => {
-  //   setManutencoes(manutencoes.filter(m => m.id !== id));
-  // };
-
-    const adicionarManutencao = async (manutencao: ManutencaoVeiculo) => {
+  const adicionarManutencao = async (manutencao: ManutencaoVeiculo) => {
     const res = await api.post('/manutencoes', manutencao);
     setManutencoes(prev => [...prev, res.data]);
   };
@@ -296,6 +281,7 @@ export function Provedor_Dados({ children }: { children: ReactNode }) {
     const res = await api.get('/despesas');
     setDespesas(res.data);
   };
+
 
   const obterDespesa = (id: string) => despesas.find(d => d.id === id);
 
@@ -346,6 +332,46 @@ export function Provedor_Dados({ children }: { children: ReactNode }) {
 
   const obterLembrete = (id: string) => lembretes.find(l => l.id === id);
 
+
+
+  // =========================
+// VIAGENS POR VEÍCULO
+// =========================
+
+const carregarViagensPorVeiculo = async (veiculoId: string) => {
+  const res = await api.get(`/viagens/veiculo/${veiculoId}`);
+  return res.data;
+};
+
+
+// =========================
+// VIAGENS POR MOTORISTA
+// =========================
+
+const carregarViagensPorMotorista = async (motoristaId: string) => {
+  const res = await api.get(`/viagens/motorista/${motoristaId}`);
+  return res.data;
+};
+
+
+// =========================
+// MANUTENÇÕES POR VEÍCULO
+// =========================
+
+const carregarManutencoesPorVeiculo = async (veiculoId: string) => {
+  const res = await api.get(`/manutencoes/veiculo/${veiculoId}`);
+  return res.data;
+};
+
+
+// =========================
+// DESPESAS POR VEÍCULO
+// =========================
+
+const carregarDespesasPorVeiculo = async (veiculoId: string) => {
+  const res = await api.get(`/despesas/veiculo/${veiculoId}`);
+  return res.data;
+};
 
 
 
@@ -408,6 +434,11 @@ export function Provedor_Dados({ children }: { children: ReactNode }) {
         deletarLembrete,
         obterLembrete,
         carregarLembretes,
+
+        carregarViagensPorVeiculo,
+        carregarViagensPorMotorista,
+        carregarManutencoesPorVeiculo,
+        carregarDespesasPorVeiculo,
       }}
     >
       {children}
