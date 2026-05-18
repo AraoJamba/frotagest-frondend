@@ -22,6 +22,8 @@ import { TrendingUp, Fuel, Gauge, Navigation } from "lucide-react";
 
 const CORES = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#6366f1"];
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
 export default function PaginaAnalises() {
   const [dadosCustos, setDadosCustos] = useState<any[]>([]);
   const [dadosKm, setDadosKm] = useState<any[]>([]);
@@ -31,13 +33,11 @@ export default function PaginaAnalises() {
     async function carregarDados() {
       try {
         const resDespesas = await fetch(
-          "http://localhost:8000/despesas/analises/resumo",
+          `{${API_URL}/despesas/analises/resumo}`,
         );
         const despesas = await resDespesas.json();
 
-        const resViagens = await fetch(
-          "http://localhost:8000/viagens/analises/resumo",
-        );
+        const resViagens = await fetch(`{${API_URL}/viagens/analises/resumo}`);
         const viagens = await resViagens.json();
 
         setDadosCustos(despesas);
@@ -251,7 +251,6 @@ export default function PaginaAnalises() {
             <span className="text-slate-500">{item.value}%</span>
           </div>
         ))}
-
       </Card>
     </div>
   );
